@@ -5,12 +5,12 @@
 }
 
 :root {
-    --ink: #1c1917;
-    --paper: #faf6f0;
-    --accent: #d95d39;
-    --accent-dark: #a8442a;
-    --line: #e3d9c9;
-    --text-muted: #6b6459;
+    --ink: #f1f5f9;
+    --paper: #0c0e1a;
+    --accent: #818cf8;
+    --accent-dark: #c084fc;
+    --line: #1e2238;
+    --text-muted: #94a3b8;
     --radius: 4px;
 }
 
@@ -192,4 +192,121 @@ h1, .brand {
     .social-links {
         justify-content: flex-start;
     }
+}
+
+.content-section {
+    padding: 4.5rem 0;
+    border-top: 1px solid var(--line);
+}
+
+.section-title {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 2rem;
+    margin-bottom: 2.5rem;
+}
+
+.list-item {
+    margin-bottom: 2.5rem;
+}
+
+.list-item:last-child {
+    margin-bottom: 0;
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.25rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.item-header h3 {
+    font-size: 1.25rem;
+    color: var(--ink);
+}
+
+.date {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.organisation {
+    color: var(--accent-dark);
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+}
+
+.description {
+    color: var(--text-muted);
+    max-width: 700px;
+}
+
+.description-list {
+    color: var(--text-muted);
+    padding-left: 1.25rem;
+    margin-top: 0.5rem;
+}
+
+.description-list li {
+    margin-bottom: 0.5rem;
+}
+
+.description-list li:last-child {
+    margin-bottom: 0;
+}
+
+.portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.portfolio-item {
+    aspect-ratio: 16/9;
+    background-color: var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 2px solid var(--ink);
+}
+
+.portfolio-item img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3 ease;
+}
+
+.portfolio-item:hover img {
+    transform: scale(1.05);
+}
+
+.portfolio-item iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: calc(var(--radius) - 2px);
+}
+
+.skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.skill-tag {
+    background-color: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    font-weight: 600;
 }
