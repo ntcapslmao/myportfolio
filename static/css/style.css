@@ -149,6 +149,10 @@ h1, .brand {
         transform: rotate(-45deg);
         top: 0;
     }
+
+    .event-gallery {
+        grid-template-columns: 1fr;
+    }
 }
 
 .hero {
@@ -366,11 +370,19 @@ section {
     margin-bottom: 0;
 }
 
-.portfolio-grid {
+.event-block {
+    margin-bottom: 4rem;
+}
+
+.event-block:last-child {
+    margin-bottom: 0;
+}
+
+.event-gallery {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.5rem;
-    margin-top: 2rem;
+    margin-top: 1.5rem;
 }
 
 .portfolio-item {
