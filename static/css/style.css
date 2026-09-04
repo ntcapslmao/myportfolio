@@ -4,6 +4,12 @@
     box-sizing: border-box;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
 :root {
     --ink: #f1f5f9;
     --paper: #0c0e1a;
@@ -32,6 +38,11 @@ h1, .brand {
 }
 
 .site-header {
+    position: sticky;
+    top: 0;
+    height: 70px;
+    background: var(--paper);
+    z-index: 1000;
     border-bottom: 1px solid var(--line);
 }
 
@@ -166,7 +177,7 @@ h1, .brand {
     aspect-ratio: 1 / 1;
     object-fit: cover;
     border-radius: var(--radius);
-    border: 3px solid var(--ink);
+    border: none;  /* maybe remove? gatau deh, kontras banget soalnya skrg. */
 }
 
 .site-footer {
@@ -197,6 +208,10 @@ h1, .brand {
 .content-section {
     padding: 4.5rem 0;
     border-top: 1px solid var(--line);
+}
+
+section {
+    scroll-margin-top: 80px;
 }
 
 .section-title {
@@ -280,7 +295,7 @@ h1, .brand {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3 ease;
+    transition: transform 0.3s ease;
 }
 
 .portfolio-item:hover img {
