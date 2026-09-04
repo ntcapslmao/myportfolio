@@ -25,10 +25,19 @@ body {
     color: var(--ink);
     background-color: var(--paper);
     line-height: 1.6;
+
+    background-image: url(/static/img/topography.svg);
+    background-repeat: repeat;
+    background-attachment: fixed;
+    background-position: center;
 }
 
 h1, .brand {
     font-family: "Space Grotesk", -apple-system, sans-serif;
+}
+
+.brand, .hero-kicker, .organisation, .section-title {
+    text-shadow: 0 0 15px rgba(241, 245, 249, 0.3), 0 0 30px rgba(129, 140, 248, 0.2);
 }
 
 .container {
@@ -71,6 +80,77 @@ h1, .brand {
     font-size: 0.95rem;
 }
 
+.nav-toggle, .nav-toggle-label {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .nav-toggle-label {
+        display: block;
+        cursor: pointer;
+        padding: 1rem 0;
+        z-index: 1001;
+    }
+
+    .nav-toggle-label span, .nav-toggle span::before, .nav-toggle-label span::after {
+        display: block;
+        background: var(--ink);
+        height: 2px;
+        width: 24px;
+        position: relative;
+        transition: background 0.3s, transform 0.3s;
+    }
+    
+    .nav-toggle-label span::before, .nav-toggle-label span::after {
+        content: '';
+        position: absolute;
+    }
+
+    .nav-toggle-label span::before { bottom: 8px; }
+    .nav-toggle-label span::after { top: 8px; }
+
+    .site-header nav {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--paper);
+        border-bottom: 1px solid var(--line);
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+    }
+
+    .site-header nav a {
+        padding: 1.25rem;
+        width: 100%;
+        text-align: center;
+        border-top: 1px solid var(--line);
+    }
+
+    .nav-toggle:checked ~ nav {
+        max-height: 400px;
+    }
+
+    .nav-toggle:checked ~ .nav-toggle-label span {
+        background: transparent;
+    }
+
+    .nav-toggle:checked ~ .nav-toggle-label span::before {
+        transform: rotate(45deg);
+        bottom: 0;
+    }
+
+    .nav-toggle:checked ~ .nav-toggle-label span::after {
+        transform: rotate(-45deg);
+        top: 0;
+    }
+}
+
 .hero {
     padding: 4.5rem 0 5rem;
 }
@@ -86,6 +166,10 @@ h1, .brand {
 
 .hero-identity {
     grid-area: identity;
+}
+
+.hero-identity h1 {
+    text-shadow: 0 0 15px rgba(241, 245, 249, 0.3), 0 0 30px rgba(129, 140, 248, 0.2);
 }
 
 .hero-details {
@@ -222,6 +306,13 @@ section {
 
 .list-item {
     margin-bottom: 2.5rem;
+    border-left: 2px solid var(--line);
+    padding-left: 1.5rem;
+    transition: border-color 0.3s ease;
+}
+
+.list-item:hover {
+    border-left-color: var(--accent);
 }
 
 .list-item:last-child {
