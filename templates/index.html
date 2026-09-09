@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ghazi Alfisyahri - Portfolio</title>
+    <title>{{ name }} - Portfolio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
@@ -12,17 +12,14 @@
 <body>
     <header class="site-header">
         <div class="container">
-            <a href="#profile" class="brand">Ghazi Alfisyahri</a>
+            <a href="{% url 'main:show_main' %}" class="brand">{{ name }}</a>
 
             <input type="checkbox" id="nav-toggle" class="nav-toggle">
             <label for="nav-toggle" class="nav-toggle-label"><span></span></label>
 
             <nav>
-                <a href="#profile">Profile</a>
-                <a href="#education">Education</a>
-                <a href="#experience">Experience</a>
-                <a href="#portfolio">Creative</a>
-                <a href="#skills">Skills</a>
+                <a href="{% url 'main:show_main' %}">Profile</a>
+                <a href="{% url 'main:show_experience' %}">Experience</a>
             </nav>
         </div>
     </header>
@@ -32,22 +29,22 @@
             <div class="container hero-grid">
                 <div class="hero-identity">
                     <p class="hero-kicker">Computer Science &middot; Universitas Indonesia</p>
-                    <h1>Muhammad Ghazi Alfisyahri Latief</h1>
+                    <h1>{{ name }}</h1>
                 </div>
                 <div class="hero-photo">
                     <div class="photo-block"></div>
-                    <img class="avatar" src="/static/img/image.png" alt="Photo of Ghazi">
+                    <img class="avatar" src="/static/img/image.png" alt="Photo of {{ name }}">
                 </div>
                 <div class="hero-details">
-                    <p class="bio">Second-Year Undergraduate Student @ Faculty of Computer Science, Universitas Indonesia with a keen interest in game development, data science, and software engineering.</p>
+                    <p class="bio">{{ bio }}</p>
                     <dl class="meta-list">
                         <div class="meta-row">
                             <dt>NPM</dt>
-                            <dd>2506537751</dd>
+                            <dd>{{ npm }}</dd>
                         </div>
                         <div class="meta-row">
                             <dt>Program</dt>
-                            <dd>S1 Ilmu Komputer</dd>
+                            <dd>{{ study_program }}</dd>
                         </div>
                     </dl>
                     <div class="social-links">
@@ -89,129 +86,6 @@
                 </div>
             </div>
 
-        </section>
-
-        <section class="content-section" id="experience">
-            <div class="container">
-                <h2 class="section-title">Organisational Experience</h2>
-                <div class="list-container">
-
-                    <div class="list-item">
-                        <div class="item-header">
-                            <h3>Staff of Documentation and Animation</h3>
-                            <span class="date">April 2026 &ndash; Present</span>
-                        </div>
-                        <p class="organisation">COMPFEST 18</p>
-                        <ul class="description-list">
-                            <li>Captured and edited high-resolution photography and videography for COMPFEST 18, a 
-                            one-stop annual IT event organized by the students of the Faculty of Computer
-                            Science, Universitas Indonesia.</li>
-                        </ul>
-                    </div>
-
-                    <div class="list-item">
-                        <div class="item-header">
-                            <h3>Expert Staff of Documentation and Cinematography</h3>
-                            <span class="date">March 2026 &ndash; Present</span>
-                        </div>
-                        <p class="organisation">Open House Fasilkom UI 2026</p>
-                        <ul class="description-list">
-                            <li>Helped cinematography and photography operations for Open 
-                            House Fasilkom UI 2026, overseeing the complete production lifecycle from 
-                            storyboard to final cut to produce high-impact promotional videos specifically 
-                            tailored to recruit prospective high school students to the Faculty of Computer 
-                            Science, Universitas Indonesia.</li>
-                        </ul>
-                    </div>
-
-                    <div class="list-item">
-                        <div class="item-header">
-                            <h3>Staff of Academic</h3>
-                            <span class="date">June 2026 &ndash; August 2026</span>
-                        </div>
-                        <p class="organisation">Dasar-Dasar Pemrograman 0 by ARUNG CSUI 2025</p>
-                        <ul class="description-list">
-                            <li>Designed and developed comprehensive Python programming 
-                            curricula, including coding exercises, quizzes, and practice modules, for 
-                            incoming Faculty of Computer Science freshmen at Universitas Indonesia.</li>
-                            <li>Facilitated early academic onboarding for the Foundations of Programming 1 
-                            course, enabling students to build a strong baseline in computational 
-                            thinking and syntax knowledge.</li>
-                            <li>Evaluated and refined instructional materials based on student performance 
-                            metrics, optimizing learning outcomes for a cohort of 400+ students.</li>
-                        </p>
-                    </div>
-
-                    <div class="list-item">
-                        <div class="item-header">
-                            <h3>Mentorship Role</h3>
-                            <span class="date">June 2026 &ndash; August 2026</span>
-                        </div>
-                        <p class="organisation">Dasar-Dasar Pemrograman 0 by ARUNG CSUI 2025</p>
-                        <ul class="description-list">
-                            <li>Mentored a cohort of 6 incoming freshmen alongside a partner, 
-                            providing targeted academic guidance and emotional support during their transition 
-                            to university-level computer science.</li>
-                            <li>Conducted 1-on-1 and group mentoring sessions to troubleshoot Python coding 
-                            challenges, debug logic errors, and explain foundational programming concepts.</li>
-                            <li>Fostered a collaborative and inclusive learning environment, resulting in increased 
-                            student confidence and academic readiness prior to the start of the semester.</li>
-                        </ul>
-                    </div>
-
-                    <div class="list-item">
-                        <div class="item-header">
-                            <h3>Staff of Documentation</h3>
-                            <span class="date">February 2026 &ndash; June 2026</span>
-                        </div>
-                        <p class="organisation">BETIS Fasilkom UI 2026</p>
-                        <ul class="description-list">
-                            <li>Filmed and edited dynamic video content for BETIS Fasilkom UI 
-                            2026, a high-impact initiative providing free SNBT/UTBK university entrance exam 
-                            tutoring to Indonesian high school students.</li>
-                            <li>Produced engaging educational and promotional media that increased program 
-                            visibility and student participation across social media platforms.</li>
-                            <li>Documented live tutoring sessions and large-scale events, delivering polished 
-                            visual assets under tight deadlines to support ongoing marketing campaigns.</li>
-                            </ul>
-                    </div>
-
-                    <div class="list-item">
-                        <div class="item-header">
-                            <h3>Staff of Documentation and Cinematography</h3>
-                            <span class="date">August 2025 &ndash; November 2025</span>
-                        </div>
-                        <p class="organisation">Open House Fasilkom UI 2026</p>
-                        <ul class="description-list">
-                            <li>Executed comprehensive photo and video coverage for Open House 
-                            Fasilkom UI 2025, highlighting key campus activities to attract prospective 
-                            students to the Faculty of Computer Science, Universitas Indonesia.</li>
-                            <li>Edited and finalized high-quality promotional materials, ensuring narrative 
-                            consistency and strong visual appeal for university recruitment drives.</li>
-                            <li>Collaborated with event organizers to identify and capture crucial moments, 
-                            optimizing the media library for future promotional use.</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="list-item">
-                        <div class="item-header">
-                            <h3>Staff of Documentation</h3>
-                            <span class="date">March 2024 &ndash; October 2024</span>
-                        </div>
-                        <p class="organisation">High School Celebration (HSC) 34</p>
-                        <ul class="description-list">
-                            <li>Managed fast-paced event photography for High School Celebration 
-                            (HSC) 34, capturing high-energy moments across sports and e-sports competitions, 
-                            as well as formal opening and closing ceremonies.</li>
-                            <li>Processed, color-corrected, and cataloged hundreds of high-resolution images using 
-                            Lightroom and Photoshop for immediate release to media teams and participants.</li>
-                            <li>Operated effectively in dynamic environments, anticipating crucial event highlights 
-                            to deliver a comprehensive and engaging visual record of the multi-day event.</li>
-                        </ul>
-                    </div>
-
-                </div>
-            </div>
         </section>
 
         <section class="content-section" id="portfolio">
@@ -402,7 +276,7 @@
 
     <footer class="site-footer">
         <div class="container">
-            <p>&copy; 2026 Ghazi. Fakultas Ilmu Komputer, Universitas Indonesia.</p>
+            <p>&copy; 2026 {{ name }}. Fakultas Ilmu Komputer, Universitas Indonesia.</p>
         </div>
     </footer>
 </body>
