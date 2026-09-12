@@ -560,7 +560,7 @@ section {
     font-weight: 600;
 }
 
-.experience-section {
+.mvt-item-section {
     padding: 4rem 0;
     border-top: 1px solid var(--line);
 }
@@ -573,54 +573,58 @@ section {
     text-transform: uppercase;
 }
 
-.experience-section h1 {
+.mvt-item-section h1 {
     margin: 0.4rem 0 1.5rem;
     font-size: 2rem;
 }
 
-.experience-grid {
+.mvt-item-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.5rem;
 }
 
-.experience-card {
+.mvt-item-card {
     padding: 1.25rem;
     background-color: var(--paper);
     border: 1px solid var(--line);
     border-radius: var(--radius);
 }
 
-.experience-category {
+.mvt-item-card:hover {
+    border: 1px solid var(--accent);
+}
+
+.mvt-item-category {
     color: var(--accent-dark);
     font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
 }
 
-.experience-card h2 {
+.mvt-item-card h2 {
     margin: 0.5rem 0;
     font-size: 1.25rem;
 }
 
-.experience-description,
+.mvt-item-description,
 .empty-state {
     color: var(--text-muted);
 }
 
-.experience-status {
+.mvt-item-status {
     margin-top: 1rem;
     font-size: 0.85rem;
     font-weight: 600;
 }
 
-.experience-meta {
+.mvt-item-meta {
     font-size: 0.85rem;
     color: var(--text-muted);
     margin-bottom: 1.25rem;
 }
 
-.experience-meta .org-name {
+.mvt-item-meta .org-name {
     color: var(--ink);
     font-weight: 600;
 }
