@@ -35,10 +35,10 @@
                 <div class="mvt-item-grid">
                     {% for edu in education_list %}
                         <article class="mvt-item-card">
-                            <h2>{{ edu.institution }}</h2>
+                            <h2>{{ edu.degree }}</h2>
                             
                             <p class="mvt-item-meta">
-                                <span class="org-name">{{ edu.degree }}</span> &bull;
+                                <span class="org-name">{{ edu.institution }}</span> &bull;
                                 {{ edu.started_at|date:"Y" }} &ndash;
                                 {% if edu.is_ongoing %}Present{% else %}{{ edu.ended_at|date:"Y" }}{% endif %}
                             </p>

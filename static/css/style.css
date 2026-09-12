@@ -60,7 +60,13 @@ h1, .brand {
     font-family: "Space Grotesk", -apple-system, sans-serif;
 }
 
-.brand, .hero-kicker, .organisation, .section-title {
+.brand, 
+.hero-kicker, 
+.organisation, 
+.section-title,
+.org-name,
+.container h1
+{
     text-shadow: 0 0 15px rgba(241, 245, 249, 0.3), 0 0 30px rgba(129, 140, 248, 0.2);
 }
 
@@ -625,7 +631,7 @@ section {
 }
 
 .mvt-item-meta .org-name {
-    color: var(--ink);
+    color: var(--accent-dark);
     font-weight: 600;
 }
 
