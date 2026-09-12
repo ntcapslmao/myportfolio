@@ -32,6 +32,13 @@ DEBUG = not PRODUCTION
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "muhammad-ghazi51-myportfolio.pws.cs.ui.ac.id"]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://muhammad-ghazi51-myportfolio.pws.cs.ui.ac.id",
+]
+
+CSRF_COOKIE_SECURE    = True
+SESSION_COOKIE_SECURE = True
+
 # Application definition
 
 INSTALLED_APPS = [
