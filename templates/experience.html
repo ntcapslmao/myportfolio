@@ -33,20 +33,22 @@
                 <div class="experience-grid">
                     {% for experience in experience_list %}
                         <article class="experience-card">
-                            <span class="experience-category">
-                                {{ experience.get_category_display }}
-                            </span>
+                            <span style="display: none;">{{ experience.category }}</span>
+                            <span class="experience-category">{{ experience.get_category_display }}</span>
+
                             <h2>{{ experience.title }}</h2>
-                            <p class="experience-description">
-                                {{ experience.description }}
+
+                            <p class="experience-meta">
+                                <span class="org-name">{{ experience.organisation }}</span> &bull;
+                                {{ experience.started_at|date:"M Y" }} &ndash;
+                                {% if experience.is_ongoing %}Present{% else %}{{ experience.ended_at|date:"M Y" }}{% endif %}
                             </p>
 
-                            {% if experience.is_ongoing %}
-                                <p class="experience-status">ONGOING</p>
-                            {% else %}
-                                <p class="experience-status">FINISHED</p>
-                            {% endif %}
+                            <p class="experience-description">
+                                {{ experience.description|linebreaksbr }}
+                            </p>
                         </article>
+
                     {% empty %}
                         <p class="empty-state">
                             Belum ada pengalaman yang ditambahkan.
