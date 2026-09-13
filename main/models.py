@@ -42,3 +42,27 @@ class Education(models.Model):
     @property
     def is_ongoing(self):
         return self.ended_at is None
+
+class CreativeProject(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    started_at = models.DateField()
+    ended_at = models.DateField(blank=True, null=True)
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+        
+    @property
+    def is_ongoing(self):
+        return self.ended_at is None
+
+class PortfolioItem(models.Model):
+    project = models.ForeignKey(CreativeProject, related_name='items', on_delete=models.CASCADE)
+    title = models.CharField(max_length=255, help_text="Used for image alt text")
+    image = models.ImageField(upload_to='portfolio_images/', blank=True, null=True)
+    video_embed_url = models.URLField(blank=True, null=True)
+    
+    def __str__(self):
+        return f"{self.title} (in {self.project.title})"

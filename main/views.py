@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from main.models import Experience, Education
+from main.models import Experience, Education, CreativeProject
 
 def show_main(request):
     context = {
@@ -28,3 +28,13 @@ def show_education(request):
     }
 
     return render(request, "education.html", context)
+
+def show_portfolio(request):
+    projects = CreativeProject.objects.prefetch_related("items").order_by("-started_at")
+
+    context = {
+        "name": "Muhammad Ghazi Alfisyahri Latief",
+        "projects": projects
+    }
+
+    return render(request, "portfolio.html", context)
