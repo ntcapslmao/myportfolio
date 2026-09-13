@@ -28,7 +28,7 @@ PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 SECRET_KEY = os.getenv('SECRET_KEY', 'gatau ini saya ngikutin mas-mas stack overflow')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = not PRODUCTION
+DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "muhammad-ghazi51-myportfolio.pws.cs.ui.ac.id"]
 
