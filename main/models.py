@@ -61,7 +61,7 @@ class CreativeProject(models.Model):
 class PortfolioItem(models.Model):
     project = models.ForeignKey(CreativeProject, related_name='items', on_delete=models.CASCADE)
     title = models.CharField(max_length=255, help_text="Used for image alt text")
-    image = models.ImageField(upload_to='portfolio_images/', blank=True, null=True)
+    image_url = models.CharField(max_length=500, blank=True, null=True, help_text="Imgur link or /static/img/ path")
     video_embed_url = models.URLField(blank=True, null=True)
     
     def __str__(self):

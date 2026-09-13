@@ -18,10 +18,18 @@
             <label for="nav-toggle" class="nav-toggle-label"><span></span></label>
 
             <nav>
-                <a href="{% url 'main:show_main' %}">Profile</a>
-                <a href="{% url 'main:show_experience' %}">Experience</a>
-                <a href="{% url 'main:show_education' %}">Education</a>
-                <a href="{% url 'main:show_portfolio' %}">Creative</a>
+                <a href="{% url 'main:show_main' %}" class="{% if request.resolver_match.url_name == 'show_main' %} active {% endif %}">
+                    Profile
+                </a>
+                <a href="{% url 'main:show_experience' %}" class="{% if request.resolver_match.url_name == 'show_experience' %} active {% endif %}">
+                    Experience
+                </a>
+                <a href="{% url 'main:show_education' %}" class="{% if request.resolver_match.url_name == 'show_education' %} active {% endif %}">
+                    Education
+                </a>
+                <a href="{% url 'main:show_portfolio' %}" class="{% if request.resolver_match.url_name == 'show_portfolio' %} active {% endif %}">
+                    Creative
+                </a>
             </nav>
         </div>
     </header>
@@ -53,173 +61,6 @@
                         <a href="https://github.com/ntcapslmao" class="social-link">GitHub</a>
                         <a href="https://www.linkedin.com/in/muhammad-ghazi-alfisyahri-latief-4409a8378/" class="social-link">LinkedIn</a>
                         <a href="mailto:muhammad.ghazi51@ui.ac.id" class="social-link">Email</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="content-section" id="portfolio">
-            <div class="container">
-                <h2 class="section-title">Creative Works and Portfolio</h2>
-
-                <div class="event-block">
-                    <div class="item-header">
-                        <h3>High School Celebration (HSC) 34</h3>
-                        <span class="date">2024</span>
-                    </div>
-                    <p class="description">Photography coverage for the grand closing of High School Celebration (HSC) 2024.</p>
-
-                    <div class="event-gallery">
-
-                        <a href="#lightbox-hsc1" class="portfolio-item">
-                            <img src="/static/img/guitar.jpg" 
-                            alt="Photo of a guitarist of Rizky Febian taken from HSC 34."
-                            loading="lazy">
-                        </a>
-
-                        <a href="#_" class="lightbox" id="lightbox-hsc1">
-                            <img src="/static/img/guitar.jpg" alt="Photo of a guitarist of Rizky Febian taken from HSC 34.">
-                        </a>
-
-                        <a href="#lightbox-hsc2" class="portfolio-item">
-                            <img src="/static/img/rizky.jpg" 
-                            alt="Photo of Rizky Febian taken from HSC 34."
-                            loading="lazy">
-                        </a>
-
-                        <a href="#_" class="lightbox" id="lightbox-hsc2">
-                            <img src="/static/img/rizky.jpg" alt="Photo of Rizky Febian taken from HSC 34.">
-                        </a>
-
-                        <a href="#lightbox-hsc3" class="portfolio-item">
-                            <img src="/static/img/schoolband.jpg" 
-                            alt="Photo of a school band taken from HSC 34."
-                            loading="lazy">
-                        </a>
-
-                        <a href="#_" class="lightbox" id="lightbox-hsc3">
-                            <img src="/static/img/schoolband.jpg" alt="Photo of a school band taken from HSC 34.">
-                        </a>
-
-                        <a href="#lightbox-hsc4" class="portfolio-item">
-                            <img src="/static/img/ran.jpg" 
-                            alt="Photo of RAN taken from HSC 34."
-                            loading="lazy">
-                        </a>
-
-                        <a href="#_" class="lightbox" id="lightbox-hsc4">
-                            <img src="/static/img/ran.jpg" alt="Photo of RAN taken from HSC 34.">
-                        </a>
-
-                        <a href="#lightbox-hsc5" class="portfolio-item">
-                            <img src="/static/img/confetti.jpg" 
-                            alt="Photo of RAN's vocalist surrounded by confetti taken from HSC 34."
-                            loading="lazy">
-                        </a>
-
-                        <a href="#_" class="lightbox" id="lightbox-hsc5">
-                            <img src="/static/img/confetti.jpg" alt="Photo of RAN's vocalist surrounded by confetti taken from HSC 34.">
-                        </a>
-
-                        <a href="#lightbox-hsc6" class="portfolio-item">
-                            <img src="/static/img/yellow.jpg" 
-                            alt="Photo of RAN's vocalist in a beautiful yellow light taken from HSC 34."
-                            loading="lazy">
-                        </a>
-
-                        <a href="#_" class="lightbox" id="lightbox-hsc6">
-                            <img src="/static/img/yellow.jpg" alt="Photo of RAN's vocalist in a beautiful yellow light taken from HSC 34.">
-                        </a>
-                    </div>
-                </div>
-
-                <div class="event-block">
-                    <div class="item-header">
-                        <h3>Personal Photography Hunts</h3>
-                        <span class="date">2024 &ndash; 2025</span>
-                    </div>
-                    <p class="description">Personal photography taken from my travels over the years.</p>
-                    
-                    <div class="event-gallery">
-
-                        <a href="#lightbox-personal1" class="portfolio-item">
-                            <img src="/static/img/bandung.jpg" 
-                            alt="Photo of Laskar Wanita Statue in Bandung."
-                            loading="lazy">
-                        </a>
-
-                        <a href="#_" class="lightbox" id="lightbox-personal1">
-                            <img src="/static/img/bandung.jpg" alt="Photo of Laskar Wanita Statue in Bandung.">
-                        </a>
-
-                        <a href="#lightbox-personal2" class="portfolio-item">
-                            <img src="/static/img/tree.jpg" 
-                            alt="Photo of a tree from a suburban back garden."
-                            loading="lazy">
-                        </a>
-
-                        <a href="#_" class="lightbox" id="lightbox-personal2">
-                            <img src="/static/img/tree.jpg" alt="Photo of a tree from a suburban back garden.">
-                        </a>
-
-                        <a href="#lightbox-personal3" class="portfolio-item">
-                            <img src="/static/img/tugu.jpg" 
-                            alt="Photo of Tugu Yogyakarta."
-                            loading="lazy">
-                        </a>
-
-                        <a href="#_" class="lightbox" id="lightbox-personal3">
-                            <img src="/static/img/tugu.jpg" alt="Photo of a tree from a suburban back garden.">
-                        </a>
-
-                    </div>
-                </div>
-
-                <div class="event-block">
-                    <div class="item-header">
-                        <h3>Video Projects</h3>
-                        <span class="date">2023</span>
-                    </div>
-                    <p class="Video projects I have participated in, either as a cameraman or an editor."></p>
-
-                    <div class="event-gallery">
-
-                        <div class="portfolio-item">
-                            <iframe 
-                                src="https://www.youtube.com/embed/3X2R1uaFmOw" 
-                                loading="lazy"
-                                frameborder="0"
-                                title="Fajar Terbit: Serangan Misterius P5 Short Movie"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                referrerpolicy="strict-origin-when-cross-origin"
-                                allowfullscreen>
-                            </iframe>
-                        </div>
-
-                        <div class="portfolio-item">
-                            <iframe 
-                                src="https://www.youtube.com/embed/IZ6Rm6l7org"
-                                loading="lazy"
-                                frameborder="0" 
-                                title="Meet and Greet Rohis 34, 2023 Aftermovie"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                referrerpolicy="strict-origin-when-cross-origin"
-                                allowfullscreen>
-                            </iframe>
-                        </div>
-
-                        <div class="portfolio-item">
-                            <iframe 
-                                src="https://www.youtube.com/embed/AJpf2o4AX2Y"
-                                loading="lazy"
-                                frameborder="0"
-                                title="Sore Izakaya Fatmawati Review Vlog"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                referrerpolicy="strict-origin-when-cross-origin"
-                                allowfullscreen>
-                            </iframe>
-                        </div>
-
                     </div>
                 </div>
             </div>

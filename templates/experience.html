@@ -18,10 +18,18 @@
             <label for="nav-toggle" class="nav-toggle-label"><span></span></label>
 
             <nav>
-                <a href="{% url 'main:show_main' %}">Profile</a>
-                <a href="{% url 'main:show_experience' %}">Experience</a>
-                <a href="{% url 'main:show_education' %}">Education</a>
-                <a href="{% url 'main:show_portfolio' %}">Creative</a>
+                <a href="{% url 'main:show_main' %}" class="{% if request.resolver_match.url_name == 'show_main' %} active {% endif %}">
+                    Profile
+                </a>
+                <a href="{% url 'main:show_experience' %}" class="{% if request.resolver_match.url_name == 'show_experience' %} active {% endif %}">
+                    Experience
+                </a>
+                <a href="{% url 'main:show_education' %}" class="{% if request.resolver_match.url_name == 'show_education' %} active {% endif %}">
+                    Education
+                </a>
+                <a href="{% url 'main:show_portfolio' %}" class="{% if request.resolver_match.url_name == 'show_portfolio' %} active {% endif %}">
+                    Creative
+                </a>
             </nav>
         </div>
     </header>
