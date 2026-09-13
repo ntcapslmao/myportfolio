@@ -38,11 +38,12 @@
                         <div class="item-header">
                             <h3>{{ project.title }}</h3>
                             <span class="date">
-                                {{ project.started_at|date:"Y" }} &ndash; 
                                 {% if project.is_ongoing %}
-                                    Present
+                                    {{ project.started_at|date:"Y" }} &ndash; Present
+                                {% elif project.started_at.year == project.ended_at.year %}
+                                    {{ project.started_at|date:"Y" }}
                                 {% else %}
-                                    {{ project.ended_at|date:"Y" }}
+                                    {{ project.started_at|date:"Y" }} &ndash; {{ project.ended_at|date:"Y" }}
                                 {% endif %}
                             </span>
                         </div>

@@ -59,7 +59,6 @@ class CreativeProject(models.Model):
         return self.ended_at is None
 
 class PortfolioItem(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     project = models.ForeignKey(CreativeProject, related_name='items', on_delete=models.CASCADE)
     title = models.CharField(max_length=255, help_text="Used for image alt text")
     image = models.ImageField(upload_to='portfolio_images/', blank=True, null=True)
