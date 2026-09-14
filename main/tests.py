@@ -1,7 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
-from datetime import date
 
 from main.models import Experience, Education, CreativeProject, PortfolioItem
 
@@ -25,7 +24,7 @@ class ExperienceTest(TestCase):
             organisation="COMPFEST 18",
             description="Captured and edited high-resolution photography and videography for COMPFEST 18, a one-stop annual IT event organized by the students of the Faculty of Computer Science, Universitas Indonesia.",
             category="volunteer",
-            started_at=date(2026, 4, 1)
+            started_at="2026-04-01"
         )
 
     def test_experience_model(self):
@@ -62,8 +61,8 @@ class EducationTest(TestCase):
             degree="Bachelor of Computer Science",
             institution="Universitas Indonesia",
             description="Relevant coursework: Foundations of Programming 1, Foundations of Programming 2, Linear Algebra, Digital Systems, and Computer Architecture.",
-            started_at=date(2025, 8, 1),
-            ended_at=date(2029, 6, 1)
+            started_at="2025-08-01",
+            ended_at="2029-06-01"
         )
 
     def test_education_page_renders_data(self):
@@ -85,7 +84,7 @@ class PortfolioTest(TestCase):
         self.project = CreativeProject.objects.create(
             title="Personal Photography Hunts",
             description="Personal photography taken from my travels.",
-            started_at=date(2024, 1, 1)
+            started_at="2024-01-01"
         )
 
         self.item = PortfolioItem.objects.create(
@@ -95,7 +94,7 @@ class PortfolioTest(TestCase):
         )
 
     def test_portfolio_model_relation(self):
-        self.assertEqual(self.item.project.title, "Personal Photography Hunts")
+        self.assertEqual(self.item.project.title, "Personal Photography Hunts") # type: ignore
 
     def test_portfolio_page_renders_data(self):
         response = self.client.get(reverse("main:show_portfolio"))
