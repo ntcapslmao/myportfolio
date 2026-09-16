@@ -1,102 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ name }} - Portfolio</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/style.css">
-</head>
-
-<body>
-    <header class="site-header">
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<main>
+    <section class="mvt-item-section" id="portfolio">
         <div class="container">
-            <a href="{% url 'main:show_main' %}" class="brand">{{ name }}</a>
-
-            <input type="checkbox" id="nav-toggle" class="nav-toggle">
-            <label for="nav-toggle" class="nav-toggle-label"><span></span></label>
-
-            <nav>
-                <a href="{% url 'main:show_main' %}" class="{% if request.resolver_match.url_name == 'show_main' %} active {% endif %}">
-                    Profile
-                </a>
-                <a href="{% url 'main:show_experience' %}" class="{% if request.resolver_match.url_name == 'show_experience' %} active {% endif %}">
-                    Experience
-                </a>
-                <a href="{% url 'main:show_education' %}" class="{% if request.resolver_match.url_name == 'show_education' %} active {% endif %}">
-                    Education
-                </a>
-                <a href="{% url 'main:show_portfolio' %}" class="{% if request.resolver_match.url_name == 'show_portfolio' %} active {% endif %}">
-                    Creative
-                </a>
-            </nav>
-        </div>
-    </header>
-
-    <main>
-        <section class="mvt-item-section" id="portfolio">
-            <div class="container">
-                <p class="section-kicker">Through the Lens</p>
-                <h1>Creative Works and Portfolio</h1>
-                
-                {% for project in projects %}
-                    <div class="mvt-item-grid">
-                        <div class="item-header">
-                            <h3>{{ project.title }}</h3>
-                            <span class="date">
-                                {% if project.is_ongoing %}
-                                    {{ project.started_at|date:"Y" }} &ndash; Present
-                                {% elif project.started_at.year == project.ended_at.year %}
-                                    {{ project.started_at|date:"Y" }}
-                                {% else %}
-                                    {{ project.started_at|date:"Y" }} &ndash; {{ project.ended_at|date:"Y" }}
-                                {% endif %}
-                            </span>
-                        </div>
-                        
-                        <p class="description">{{ project.description|linebreaksbr }}</p>
-                        
-                        <div class="event-gallery">
-                        {% for item in project.items.all %}
-                            
-                            {% if item.video_embed_url %}
-                            <div class="portfolio-item">
-                                <iframe 
-                                    src="{{ item.video_embed_url }}" 
-                                    title="{{ item.title }}"
-                                    loading="lazy" 
-                                    frameborder="0"
-                                    allowfullscreen>
-                                </iframe>
-                            </div>
-                            {% elif item.image_url %}
-                            <a href="#lightbox-item{{ item.id }}" class="portfolio-item">
-                                <img src="{{ item.image_url }}" alt="{{ item.title }}" loading="lazy">
-                            </a>
-                                
-                            <a href="#_" class="lightbox" id="lightbox-item{{ item.id }}">
-                                <img src="{{ item.image_url }}" alt="{{ item.title }}">
-                            </a>
+            <p class="section-kicker">Through the Lens</p>
+            <h1>Creative Works and Portfolio</h1>
+            
+            {% for project in projects %}
+                <div class="mvt-item-grid">
+                    <div class="item-header">
+                        <h3>{{ project.title }}</h3>
+                        <span class="date">
+                            {% if project.is_ongoing %}
+                                {{ project.started_at|date:"Y" }} &ndash; Present
+                            {% elif project.started_at.year == project.ended_at.year %}
+                                {{ project.started_at|date:"Y" }}
+                            {% else %}
+                                {{ project.started_at|date:"Y" }} &ndash; {{ project.ended_at|date:"Y" }}
                             {% endif %}
-
-                        {% endfor %}
-                        </div>
+                        </span>
                     </div>
+                    
+                    <p class="description">{{ project.description|linebreaksbr }}</p>
+                    
+                    <div class="event-gallery">
+                    {% for item in project.items.all %}
+                        
+                        {% if item.video_embed_url %}
+                        <div class="portfolio-item">
+                            <iframe 
+                                src="{{ item.video_embed_url }}" 
+                                title="{{ item.title }}"
+                                loading="lazy" 
+                                frameborder="0"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        {% elif item.image_url %}
+                        <a href="#lightbox-item{{ item.id }}" class="portfolio-item">
+                            <img src="{{ item.image_url }}" alt="{{ item.title }}" loading="lazy">
+                        </a>
+                            
+                        <a href="#_" class="lightbox" id="lightbox-item{{ item.id }}">
+                            <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                        </a>
+                        {% endif %}
 
-                {% empty %}
-                <p class="empty-state">Belum ada creative work yang ditambahkan.</p>
-                {% endfor %}
-                
-            </div>
-        </section>
-    </main>
+                    {% endfor %}
+                    </div>
+                </div>
 
-    <footer class="site-footer">
-        <div class="container">
-            <p>&copy; 2026 {{ name }}. Fakultas Ilmu Komputer, Universitas Indonesia.</p>
+            {% empty %}
+            <p class="empty-state">Belum ada creative work yang ditambahkan.</p>
+            {% endfor %}
+            
         </div>
-    </footer>
-</body>
-</html>
+    </section>
+</main>
+{% endblock content %}
