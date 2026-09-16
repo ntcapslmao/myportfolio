@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.conf import settings
 from main.forms import ProjectForm
 from main.models import Experience, Education, CreativeProject, Project
 
@@ -80,8 +81,13 @@ def delete_project(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
     if request.method == "POST":
-        project.delete()
-        messages.success(request, "Project berhasil dihapus!")
+        passcode_input = request.POST.get("passcode")
+        if passcode_input == settings.SECRET_PASSWORD: 
+            project.delete()
+            messages.success(request, "Project berhasil dihapus!")
+        else:
+            messages.error(request, "Project gagal dihapus: Kata sandi salah!")
+
         return redirect("main:show_projects")
 
     return redirect("main:show_projects")

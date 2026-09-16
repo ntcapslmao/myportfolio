@@ -934,6 +934,31 @@ section {
     background: #b42318;
 }
 
+.messages-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+}
+
+.alert-error {
+    background: rgba(180, 35, 24, 0.1);
+    color: #fc8181;
+    border: 1px solid rgba(180, 35, 24, 0.3);
+}
+
+.alert-success {
+    background: rgba(21, 128, 61, 0.1);
+    color: #86efac;
+    border: 1px solid rgba(21, 128, 61, 0.3);
+}
+
 @media (max-width: 600px) {
     .project-header {
         align-items: flex-start;

@@ -1,8 +1,22 @@
+from django import forms
 from django.forms import ModelForm, TextInput, Textarea, URLInput
+from django.conf import settings
+from django.core.exceptions import ValidationError
 
 from main.models import Project
 
 class ProjectForm(ModelForm):
+    passcode = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "placeholder": "Masukkan kata sandi",
+                "style": "width: 100%; padding: 0.7rem; border: 1px solid var(--accent); border-radius: var(--radius); font: inherit; background: transparent; color: var(--ink);"
+            }
+        ),
+        required=True,
+        label="Admin Password"
+    )
+
     class Meta:
         model = Project
         fields = [
@@ -50,3 +64,9 @@ class ProjectForm(ModelForm):
                 }
             ),
         }
+
+    def clean_passcode(self):
+        data = self.cleaned_data.get("passcode")
+        if data != settings.SECRET_PASSWORD:
+            raise ValidationError("Access denied: Invalid Password!")
+        return data
