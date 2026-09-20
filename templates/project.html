@@ -49,7 +49,7 @@
                             <div class="project-card-actions">
                                 <div class="project-actions">
                                     {% if project.project_url %}
-                                        <a href="{{ project.project_url }}" class="button">Lihat Project</a>
+                                        <a href="{{ project.project_url }}" class="button" target="_blank" rel="noopener noreferrer">Lihat Project</a>
                                     {% endif %}
                                     {% include "components/project_delete_modal.html" with project=project %}
                                 </div>
