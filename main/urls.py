@@ -4,7 +4,7 @@ from main.views import (
     show_main, 
     show_experience, create_experience, delete_experience, get_experience_json,
     show_education, create_education, delete_education, get_education_json,
-    show_portfolio, 
+    show_portfolio, create_portfolio, delete_portfolio,
     show_projects, create_project, delete_project, get_projects_json, 
 )
 
@@ -24,6 +24,8 @@ urlpatterns = [
     path("education/<uuid:experience_id>/delete/", delete_education, name="delete_education"),
 
     path("portfolio/", show_portfolio, name="show_portfolio"),
+    path("portfolio/add/", create_portfolio, name="create_portfolio"),
+    path("portfolio/<uuid:project_id>/delete/", delete_portfolio ,name="delete_portfolio"),
 
     path("projects/", show_projects, name="show_projects"),
     path("projects/add/", create_project, name="create_project"),

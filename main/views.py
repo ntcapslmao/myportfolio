@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.conf import settings
 from django.db.models import Q
-from main.forms import ExperienceForm, ProjectForm, EducationForm
+from main.forms import ExperienceForm, ProjectForm, EducationForm, CreativeProjectForm
 from main.models import Experience, Education, CreativeProject, Project
 
 def show_main(request):
@@ -139,14 +139,55 @@ def get_education_json(request):
 # atas edu, bawah porto
 
 def show_portfolio(request):
+    title_query = request.GET.get("title", "").strip()
     projects = CreativeProject.objects.prefetch_related("items").order_by("-started_at")
+
+    if title_query:
+        projects = projects.filter(title__icontains=title_query)
 
     context = {
         "name": "Muhammad Ghazi Alfisyahri Latief",
-        "projects": projects
+        "projects": projects,
+        "title_query": title_query,
     }
 
     return render(request, "portfolio.html", context)
+
+def create_portfolio(request):
+    form = CreativeProjectForm(request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Wadah CreativeProject berhasil dibuat! Akibat keterbatasan sistem, buka Django Admin untuk menambahkan foto/video.")
+        return redirect("main:show_portfolio")
+
+    context = {
+        "name": "Muhammad Ghazi Alfisyahri Latief",
+        "form": form
+    }
+    return render(request, "portfolio_form.html", context)
+
+def delete_portfolio(request, project_id):
+    project = get_object_or_404(CreativeProject, pk=project_id)
+
+    if request.method == "POST":
+        input_passcode = request.POST.get("passcode")
+
+        if input_passcode == settings.SECRET_PASSWORD:
+            project.delete()
+            messages.success(request, "CreativeWork serta segala item didalamnya berhasil dihapus.")
+        else:
+            messages.error(request, "Gagal menghapus: Kata sandi salah.")
+        
+        return redirect("main:show_portfolio")
+    return redirect("main:show_portfolio")
+
+def get_portfolio_json(request):
+    title_query = request.GET.get("title", "").strip()
+    projects = CreativeProject.objects.all()
+    if title_query:
+        projects = projects.filter(title__icontains=title_query)
+    return HttpResponse(serializers.serialize("json", projects), content_type="application/json")
 
 # atas porto, bawah project
 

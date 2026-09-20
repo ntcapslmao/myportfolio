@@ -1,61 +1,107 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<main>
-    <section class="mvt-item-section" id="portfolio">
-        <div class="container">
-            <p class="section-kicker">Through the Lens</p>
-            <h1>Creative Works and Portfolio</h1>
-            
-            {% for project in projects %}
-                <div class="mvt-item-grid">
-                    <div class="item-header">
-                        <h3>{{ project.title }}</h3>
-                        <span class="date">
-                            {% if project.is_ongoing %}
-                                {{ project.started_at|date:"Y" }} &ndash; Present
-                            {% elif project.started_at.year == project.ended_at.year %}
-                                {{ project.started_at|date:"Y" }}
-                            {% else %}
-                                {{ project.started_at|date:"Y" }} &ndash; {{ project.ended_at|date:"Y" }}
-                            {% endif %}
-                        </span>
-                    </div>
-                    
-                    <p class="description">{{ project.description|linebreaksbr }}</p>
-                    
-                    <div class="event-gallery">
-                    {% for item in project.items.all %}
-                        
-                        {% if item.video_embed_url %}
-                        <div class="portfolio-item">
-                            <iframe 
-                                src="{{ item.video_embed_url }}" 
-                                title="{{ item.title }}"
-                                loading="lazy" 
-                                frameborder="0"
-                                allowfullscreen>
-                            </iframe>
-                        </div>
-                        {% elif item.image_url %}
-                        <a href="#lightbox-item{{ item.id }}" class="portfolio-item">
-                            <img src="{{ item.image_url }}" alt="{{ item.title }}" loading="lazy">
-                        </a>
-                            
-                        <a href="#_" class="lightbox" id="lightbox-item{{ item.id }}">
-                            <img src="{{ item.image_url }}" alt="{{ item.title }}">
-                        </a>
-                        {% endif %}
-
-                    {% endfor %}
-                    </div>
+    <main>
+        <section class="mvt-item-section" id="portfolio">
+            <div class="container">
+                <p class="section-kicker">Through the Lens</p>
+                <div class="project-header">
+                    <h1>Creative Works and Portfolio</h1>
+                    <a href="{% url 'main:create_portfolio' %}"
+                        class="button project-add-button">
+                        <span aria-hidden="true">+</span>
+                        Tambah Creative Works
+                    </a>
                 </div>
+                
+                {% if messages %}
+                <div class="messages-container">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <form method="get"
+                        action="{% url 'main:show_portfolio' %}"
+                        class="project-search">
+                    <input type="search"
+                            name="title"
+                            value="{{ title_query }}"
+                            placeholder="Cari berdasarkan nama karya atau acara"
+                            class="project-search__input"
+                            aria-label="Cari berdasarkan nama karya atau acara">
+                    <button type="submit" class="button">Cari</button>
+                </form>
+                
+                <div class="portfolio-list" style="display: flex; flex-direction: column; gap: 3rem;">
+                    {% for creative_project in projects %}
+                        <article class="mvt-item-card" style="width: 100%;">
+                            
+                            <h2>{{ creative_project.title }}</h2>
 
-            {% empty %}
-            <p class="empty-state">Belum ada creative work yang ditambahkan.</p>
-            {% endfor %}
-            
-        </div>
-    </section>
-</main>
+                            <p class="mvt-item-meta">
+                                {% if creative_project.is_ongoing %}
+                                    {{ creative_project.started_at|date:"M Y" }} &ndash; Present
+                                {% elif creative_project.started_at.year == creative_project.ended_at.year %}
+                                    {{ creative_project.started_at|date:"M Y" }} &ndash; {{ creative_project.ended_at|date:"M Y" }}
+                                {% else %}
+                                    {{ creative_project.started_at|date:"Y" }} &ndash; {{ creative_project.ended_at|date:"Y" }}
+                                {% endif %}
+                            </p>
+
+                            <p class="mvt-item-description">
+                                {{ creative_project.description|linebreaksbr }}
+                            </p>
+
+                            {% if creative_project.items.all %}
+                            <div class="event-gallery" style="margin-top: 1.5rem;">
+                                {% for item in creative_project.items.all %}
+                                    
+                                    {% if item.video_embed_url %}
+                                    <div class="portfolio-item">
+                                        <iframe 
+                                            src="{{ item.video_embed_url }}" 
+                                            title="{{ item.title }}"
+                                            loading="lazy" 
+                                            frameborder="0"
+                                            allowfullscreen>
+                                        </iframe>
+                                    </div>
+                                    
+                                    {% elif item.image_url %}
+                                    <a href="#lightbox-item{{ item.id }}" class="portfolio-item">
+                                        <img src="{{ item.image_url }}" alt="{{ item.title }}" loading="lazy">
+                                    </a>
+                                        
+                                    <a href="#_" class="lightbox" id="lightbox-item{{ item.id }}">
+                                        <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                                    </a>
+                                    {% endif %}
+                                    
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+                            <div class="project-card-actions" style="margin-top: 2rem;">
+                                <div class="project-actions">
+                                    {% include "components/portfolio_delete_modal.html" with creative_project=creative_project %}
+                                </div>
+                            </div>
+                            
+                        </article>
+
+                    {% empty %}
+                        {% if title_query %}
+                        <p class="empty-state">Tidak ada karya dengan nama tersebut.</p>
+                        {% else %}
+                        <p class="empty-state">Belum ada karya kreatif yang ditambahkan.</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </main>
 {% endblock content %}

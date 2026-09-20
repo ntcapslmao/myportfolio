@@ -1,0 +1,54 @@
+<p class="portfolio-status">
+    <button type="button"
+            class="button button-danger"
+            popovertarget="delete-portfolio-{{ creative_project.id }}"
+            aria-label="Hapus {{ creative_project.title }}"
+            title="Hapus creative project">
+        Hapus Creative Project
+    </button>
+</p>
+
+<div id="delete-portfolio-{{ creative_project.id }}"
+     class="project-delete-modal"
+     popover="auto"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="delete-portfolio-title-{{ creative_project.id }}">
+     
+    <button type="button"
+            class="project-delete-modal__backdrop"
+            popovertarget="delete-portfolio-{{ creative_project.id }}"
+            popovertargetaction="hide"
+            aria-label="Tutup konfirmasi hapus"></button>
+            
+    <div class="project-delete-modal__content">
+        <button type="button"
+                class="project-delete-modal__close"
+                popovertarget="delete-portfolio-{{ creative_project.id }}"
+                popovertargetaction="hide"
+                aria-label="Tutup konfirmasi hapus">×</button>
+                
+        <h2 id="delete-portfolio-title-{{ creative_project.id }}">Hapus Creative Project?</h2>
+        <p>
+            Apakah Anda yakin ingin menghapus
+            <strong>{{ creative_project.title }}</strong>? Seluruh item portofolio (foto/video) di dalamnya juga akan ikut terhapus.
+        </p>
+        
+        <form method="post" action="{% url 'main:delete_portfolio' creative_project.id %}" style="margin-top: 1.5rem;">
+            {% csrf_token %}
+            <div class="form-group" style="text-align: left;">
+                <label for="passcode-{{ creative_project.id }}">Kata Sandi:</label>
+                <input type="password" name="passcode" id="passcode-{{ creative_project.id }}" placeholder="Masukkan kode rahasia" required>
+            </div>
+            
+            <div class="project-delete-modal__actions" style="margin-top: 1.5rem;">
+                <button type="button"
+                        class="button button-secondary"
+                        popovertarget="delete-portfolio-{{ creative_project.id }}"
+                        popovertargetaction="hide">Batal</button>
+                        
+                <button type="submit" class="button button-danger">Ya, Hapus Semua</button>
+            </div>
+        </form>
+    </div>
+</div>
