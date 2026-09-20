@@ -3,7 +3,8 @@ from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.conf import settings
-from main.forms import ExperienceForm, ProjectForm
+from django.db.models import Q
+from main.forms import ExperienceForm, ProjectForm, EducationForm
 from main.models import Experience, Education, CreativeProject, Project
 
 def show_main(request):
@@ -79,14 +80,61 @@ def get_experience_json(request):
 # atas exp, bawah edu
 
 def show_education(request):
-    education_list = Education.objects.all().order_by("-started_at")
+    json_response = get_education_json(request)
+
+    educations = serializers.deserialize(
+        "json", json_response.content.decode("utf-8")
+    )
+    educations = [edu.object for edu in educations]
+    title_query = request.GET.get("title", "").strip()
 
     context = {
         "name": "Muhammad Ghazi Alfisyahri Latief",
-        "education_list": education_list
+        "education_list": educations,
+        "title_query": title_query,
     }
 
     return render(request, "education.html", context)
+
+def create_education(request):
+    form = EducationForm(request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Riwayat pendidikan berhasil ditambahkan.")
+        return redirect("main:show_education")
+
+    context = {
+        "name": "Muhammad Ghazi Alfisyahri Latief",
+        "form": form
+    }
+    return render(request, "education_form.html", context)
+
+def delete_education(request, education_id):
+    education = get_object_or_404(Education, pk=education_id)
+
+    if request.method == "POST":
+        input_passcode = request.POST.get("passcode")
+
+        if input_passcode == settings.SECRET_PASSWORD:
+            education.delete()
+            messages.success(request, "Riwayat pendidikan berhasil dihapus.")
+        else:
+            messages.error(request, "Gagal menghapus: Kata sandi salah.")
+        return redirect("main:show_education")
+    return redirect("main:show_education")
+
+def get_education_json(request):
+    title_query = request.GET.get("title", "").strip()
+    educations = Education.objects.all().order_by("-started_at")
+
+    if title_query:
+        educations = educations.filter(
+            Q(institution__icontains=title_query) | Q(degree__icontains=title_query)
+        )
+
+    education_json = serializers.serialize("json", educations)
+    return HttpResponse(education_json, content_type="application/json")
 
 # atas edu, bawah porto
 
