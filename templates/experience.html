@@ -1,38 +1,72 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<main>
-    <section class="mvt-item-section" id="experience">
-        <div class="container">
-            <p class="section-kicker">My journey, so far</p>
-            <h1>Experience</h1>
+    <main>
+        <section class="mvt-item-section" id="experience">
+            <div class="container">
+                <p class="section-kicker">My journey, so far</p>
+                <div class="project-header">
+                    <h1>Projects</h1>
+                    <a href="{% url 'main:create_experience' %}"
+                        class="button project-add-button">
+                        <span aria-hidden="true">+</span>
+                        Tambah Pengalaman
+                    </a>
+                </div>
+                {% if messages %}
+                <div class="messages-container">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <form method="get"
+                        action="{% url 'main:show_experience' %}"
+                        class="project-search">
+                    <input type="search"
+                            name="title"
+                            value="{{ title_query }}"
+                            placeholder="Cari berdasarkan nama pengalaman"
+                            class="project-search__input"
+                            aria-label="Cari berdasarkan nama pengalaman">
+                    <button type="submit" class="button">Cari</button>
+                </form>
+                <div class="mvt-item-grid">
+                    {% for experience in experience_list %}
+                        <article class="mvt-item-card">
+                            <span style="display: none;">{{ experience.category }}</span>
+                            <span class="mvt-item-category">{{ experience.get_category_display }}</span>
 
-            <div class="mvt-item-grid">
-                {% for experience in experience_list %}
-                    <article class="mvt-item-card">
-                        <span style="display: none;">{{ experience.category }}</span>
-                        <span class="mvt-item-category">{{ experience.get_category_display }}</span>
+                            <h2>{{ experience.title }}</h2>
 
-                        <h2>{{ experience.title }}</h2>
+                            <p class="mvt-item-meta">
+                                <span class="org-name">{{ experience.organisation }}</span> &bull;
+                                {{ experience.started_at|date:"M Y" }} &ndash;
+                                {% if experience.is_ongoing %}Present{% else %}{{ experience.ended_at|date:"M Y" }}{% endif %}
+                            </p>
 
-                        <p class="mvt-item-meta">
-                            <span class="org-name">{{ experience.organisation }}</span> &bull;
-                            {{ experience.started_at|date:"M Y" }} &ndash;
-                            {% if experience.is_ongoing %}Present{% else %}{{ experience.ended_at|date:"M Y" }}{% endif %}
-                        </p>
+                            <p class="mvt-item-description">
+                                {{ experience.description|linebreaksbr }}
+                            </p>
 
-                        <p class="mvt-item-description">
-                            {{ experience.description|linebreaksbr }}
-                        </p>
-                    </article>
+                            <div class="project-card-actions">
+                                <div class="project-actions">
+                                    {% include "components/experience_delete_modal.html" with experience=experience %}
+                                </div>
+                            </div>
+                        </article>
 
-                {% empty %}
-                    <p class="empty-state">
-                        Belum ada pengalaman yang ditambahkan.
-                    </p>
-                {% endfor %}
+                    {% empty %}
+                        {% if title_query %}
+                        <p class="empty-state">Tidak ada pengalaman dengan nama tersebut.</p>
+                        {% else %}
+                        <p class="empty-state">Belum ada pengalaman yang ditambahkan.</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
             </div>
-        </div>
-    </section>
-</main>
+        </section>
+    </main>
 {% endblock content %}

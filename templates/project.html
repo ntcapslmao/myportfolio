@@ -15,7 +15,7 @@
                         Tambah Proyek
                     </a>
                 </div>
-            {% if messages %}
+                {% if messages %}
                 <div class="messages-container">
                     {% for message in messages %}
                         <div class="alert alert-{{ message.tags }}">
@@ -23,7 +23,7 @@
                         </div>
                     {% endfor %}
                 </div>
-            {% endif %}
+                {% endif %}
                 <form method="get"
                       action="{% url 'main:show_projects' %}"
                       class="project-search">

@@ -722,7 +722,9 @@ section {
 }
 
 .form-group input,
-.form-group textarea {
+.form-group textarea,
+.form-group select,
+.form-date {
     width: 100%;
     box-sizing: border-box;
     padding: 0.7rem;
@@ -732,6 +734,12 @@ section {
     transition:
         border-color 0.2s ease,
         outline-color 0.2s ease;
+}
+
+.form-group select {
+    background-color: var(--paper);
+    color: var(--ink);
+    appearance: auto;
 }
 
 .form-group input:focus,
