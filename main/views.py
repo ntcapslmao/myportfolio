@@ -3,7 +3,7 @@ from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.conf import settings
-from django.db.models import Q
+from django.db.models import Q, F
 from main.forms import ExperienceForm, ProjectForm, EducationForm, CreativeProjectForm
 from main.models import Experience, Education, CreativeProject, Project
 
@@ -69,7 +69,7 @@ def delete_experience(request, experience_id):
 
 def get_experience_json(request):
     title_query = request.GET.get("title", "").strip()
-    experiences = Experience.objects.all().order_by("-started_at")
+    experiences = Experience.objects.all().order_by(F('ended-at').desc(nulls_first=True))
 
     if title_query:
         experiences = experiences.filter(title__icontains=title_query)
