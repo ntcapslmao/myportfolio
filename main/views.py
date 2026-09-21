@@ -69,7 +69,7 @@ def delete_experience(request, experience_id):
 
 def get_experience_json(request):
     title_query = request.GET.get("title", "").strip()
-    experiences = Experience.objects.all().order_by(F('ended-at').desc(nulls_first=True))
+    experiences = Experience.objects.all().order_by(F('ended_at').desc(nulls_first=True))
 
     if title_query:
         experiences = experiences.filter(title__icontains=title_query)
