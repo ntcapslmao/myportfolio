@@ -87,6 +87,7 @@
 
                             <div class="project-card-actions" style="margin-top: 2rem;">
                                 <div class="project-actions">
+                                    <a href="{% url 'main:edit_portfolio' creative_project.id %}" class="button button-secondary">Edit</a>
                                     {% include "components/portfolio_delete_modal.html" with creative_project=creative_project %}
                                 </div>
                             </div>

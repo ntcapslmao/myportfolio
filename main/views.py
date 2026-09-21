@@ -77,6 +77,25 @@ def get_experience_json(request):
     experience_json = serializers.serialize("json", experiences)
     return HttpResponse(experience_json, content_type="application/json")
 
+def edit_experience(request, experience_id):
+    experience = get_object_or_404(Experience, pk=experience_id)
+
+    if request.method == "POST":
+        form = ExperienceForm(request.POST, instance=experience)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Data '{experience.title}' berhasil diperbarui!")
+            return redirect("main:show_experience")
+    else:
+        form = ExperienceForm(instance=experience)
+
+    context = {
+        "name": "Muhammad Ghazi Alfisyahri Latief",
+        "form": form,
+        "is_edit": True 
+    }
+    return render(request, "experience_form.html", context)
+
 # atas exp, bawah edu
 
 def show_education(request):
@@ -136,6 +155,24 @@ def get_education_json(request):
     education_json = serializers.serialize("json", educations)
     return HttpResponse(education_json, content_type="application/json")
 
+def edit_education(request, education_id):
+    education = get_object_or_404(Education, pk=education_id)
+    if request.method == "POST":
+        form = EducationForm(request.POST, instance=education)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Riwayat pendidikan {education.degree} di {education.institution} telah diperbarui.")
+            return redirect("main:show_education")
+    else:
+        form = EducationForm(instance=education)
+
+    context = {
+            "name": "Muhammad Ghazi Alfisyahri Latief",
+            "form": form,
+            "is_edit": True
+        }
+    return render(request, "education_form.html", context)
+
 # atas edu, bawah porto
 
 def show_portfolio(request):
@@ -188,6 +225,24 @@ def get_portfolio_json(request):
     if title_query:
         projects = projects.filter(title__icontains=title_query)
     return HttpResponse(serializers.serialize("json", projects), content_type="application/json")
+
+def edit_portfolio(request, project_id):
+    project = get_object_or_404(CreativeProject, pk=project_id)
+    if request.method == "POST":
+        form = CreativeProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Creative project {project.title} telah diperbarui.")
+            return redirect("main:show_portfolio")
+    else:
+        form = CreativeProjectForm(instance=project)
+
+    context = {
+            "name": "Muhammad Ghazi Alfisyahri Latief",
+            "form": form,
+            "is_edit": True
+        }
+    return render(request, "portfolio_form.html", context)
 
 # atas porto, bawah project
 
@@ -247,3 +302,22 @@ def get_projects_json(request):
 
     projects_json = serializers.serialize("json", projects)
     return HttpResponse(projects_json, content_type="application/json")
+
+def edit_project(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+
+    if request.method == "POST":
+        form = ProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Proyek {project.title} berhasil diperbarui.")
+            return redirect("main:show_projects")
+    else:
+        form = ProjectForm(instance=project)
+
+    context = {
+        "name": "Muhammad Ghazi Alfisyahri Latief",
+        "form": form,
+        "is_edit": True 
+    }
+    return render(request, "projects_form.html", context)

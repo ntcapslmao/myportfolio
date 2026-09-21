@@ -84,6 +84,24 @@ class ExperienceTest(TestCase):
         )
         self.assertEqual(Experience.objects.count(), 0)
 
+    def test_edit_experience(self):
+        response_get = self.client.get(reverse("main:edit_experience", args=[self.experience.id]))
+        self.assertEqual(response_get.status_code, 200)
+
+        settings.SECRET_PASSWORD = "akucintaburhan42069"
+        response_post = self.client.post(reverse("main:edit_experience", args=[self.experience.id]), {
+            "title": "Staf Ahli Dokumentasi",
+            "organisation": "OH Fasilkom UI 26",
+            "category": "volunteer",
+            "started_at": "2026-04-01",
+            "description": "Tukang cekrek naik pangkat jadi stafli.",
+            "passcode": "akucintaburhan42069"
+        })
+        self.assertRedirects(response_post, reverse("main:show_experience"))
+        
+        self.experience.refresh_from_db()
+        self.assertEqual(self.experience.title, "Staf Ahli Dokumentasi")
+
 class EducationTest(TestCase):
     def setUp(self):
         self.education = Education.objects.create(
@@ -119,6 +137,22 @@ class EducationTest(TestCase):
             {"passcode": "akucintaburhan42069"}
         )
         self.assertEqual(Education.objects.count(), 0)
+
+    def test_edit_education(self):
+        response_get = self.client.get(reverse("main:edit_education", args=[self.education.id]))
+        self.assertEqual(response_get.status_code, 200)
+
+        settings.SECRET_PASSWORD = "akucintaburhan42069"
+        response_post = self.client.post(reverse("main:edit_education", args=[self.education.id]), {
+            "institution": "Universitas Indonesia",
+            "degree": "S2 Sastra Komputer",
+            "started_at": "2029-08-01",
+            "passcode": "akucintaburhan42069"
+        })
+        self.assertRedirects(response_post, reverse("main:show_education"))
+        
+        self.education.refresh_from_db()
+        self.assertEqual(self.education.degree, "S2 Sastra Komputer")
 
 class PortfolioTest(TestCase):
     def setUp(self):
@@ -161,6 +195,22 @@ class PortfolioTest(TestCase):
         )
         self.assertEqual(CreativeProject.objects.count(), 0)
         self.assertEqual(PortfolioItem.objects.count(), 0)
+
+    def test_edit_portfolio(self):
+        response_get = self.client.get(reverse("main:edit_portfolio", args=[self.project.id]))
+        self.assertEqual(response_get.status_code, 200)
+
+        settings.SECRET_PASSWORD = "akucintaburhan42069"
+        response_post = self.client.post(reverse("main:edit_portfolio", args=[self.project.id]), {
+            "title": "Comic Frontier 23",
+            "description": "Tukang cekrek pindah ke ICE BSD.",
+            "started_at": "2026-11-01",
+            "passcode": "akucintaburhan42069"
+        })
+        self.assertRedirects(response_post, reverse("main:show_portfolio"))
+        
+        self.project.refresh_from_db()
+        self.assertEqual(self.project.title, "Comic Frontier 23")
 
 class ProjectTest(TestCase):
     def setUp(self):
@@ -214,3 +264,19 @@ class ProjectTest(TestCase):
 
         self.assertRedirects(response, reverse("main:show_projects"))
         self.assertEqual(Project.objects.count(), 0)
+
+    def test_edit_project(self):
+        response_get = self.client.get(reverse("main:edit_project", args=[self.project.id]))
+        self.assertEqual(response_get.status_code, 200)
+
+        settings.SECRET_PASSWORD = "akucintaburhan42069"
+        response_post = self.client.post(reverse("main:edit_project", args=[self.project.id]), {
+            "title": "Burhan Mencari Bakat",
+            "description": "Burhan ikutan Pacilian Idol untuk mencari suara, sesuai dengan kata Baskara.",
+            "tech_stack": "Java, Git, FLStudio",
+            "passcode": "akucintaburhan42069"
+        })
+        self.assertRedirects(response_post, reverse("main:show_projects"))
+
+        self.project.refresh_from_db()
+        self.assertEqual(self.project.title, "Burhan Mencari Bakat")
