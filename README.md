@@ -70,3 +70,33 @@ Untuk kejadian spesifik, saya merasa Gemini cukup membantu (dan tidak membantu) 
 Pelajaran yang saya dapat dari pekan ini adalah:
 1. Jangan terlalu cepat percaya dengan Generative AI dan menerimanya secara mentah-mentah. Generative AI tidak selalu mengetahui bagaimana infrastruktur yang kita pakai, terutama infrastruktur yang sifatnya in-house seperti PWS. Selalu perdalam dan riset lebih lanjut seputar apa yang dikeluarkan oleh Generative AI.
 2. Sebisa mungkin coba lakukan Test Driven Development (atau paling tidak, coba dulu websitenya di localhost dengan `python manage.py runserver`).
+
+# Individual Assignment 3: A Reflection
+
+## 1. Jelaskan mengapa kita menggunakan `ModelForm` pada Django alih-alih membuat form HTML secara manual. Selain itu, jelaskan pula mengapa kita diwajibkan menambahkan `{% csrf_token %}` pada form tersebut!
+
+`ModelForm` digunakan daripada membuat form HTML manual itu adalah bentuk dari penerapan prinsip *Don't Repeat Yourself* (DRY). Daripada kita menulis `<input>`, `<select>`, `<textarea>`, dan sebagainya di setiap file HTML, memakai `ModelForm` bisa dengan otomatis membuat struktur form sesuai dengan field dan atribut yang sudah kita definisikan di `models.py`. Selain itu, `ModelForm` juga bisa melakukan input validation dengan sendirinya, seperti misal di field `institution`, terdapat batasan panjang maksimal input yaitu sepanjang 255 karakter, atau di field `started_at`, terdapat *formatting* hari dan tanggal sendiri. Hal ini memungkinkan kita untuk langsung menyimpan data ke *database* hanya dengan function `form.save()`.
+
+Untuk `{% csrf_token %}` (*Cross-Site Request Forgery*) sendiri, hal ini diwajibkan oleh Django untuk setiap form dengan method POST sebagai bentuk keamanan. Token CSRF ini berupa string unik random yang dibuat server untuk memastikan bahwasannya data yang dikirim berasal dari website kita sendiri, bukan dari pihak ketiga dan sebagainya. Tanpa token ini, Django akan menolak request POST itu dengan melempar `Error 403: Forbidden`.
+
+## 2. Pada Tutorial 03, kita membahas format data JSON dan XML. Mengapa JSON lebih disukai dalam pengembangan aplikasi web modern dibandingkan XML?
+
+Sintaks XML dinilai sangat *verbose* atau bertele-tele karena sifatnya mirip dengan HTML, yaitu mewajibkan tag pembuka dan penutup (misal `<item> something </item>`) untuk setiap data yang ditulis. JSON hanya menggunakan *key-value pairs* yang ditandai kurung kurawal (seperti {"degree": "Computer Science", "institution": "Universitas Indonesia"}) sehingga ukuran datanya lebih kecil dan lebih cepat ditransfer melalui jaringan. Bentuk *key-value pairs* yang digunakan ini juga membuat struktur data JSON lebih mudah dibaca dan dipahami sekilas karena bentuknya mirip dengan `dict` di Python.
+
+Sesuai dengan namanya juga (JavaScript Object Notation), penggunaan JSON ini juga dipermudah karena berbagai *frontend web* modern seperti React, Vue, atau VanillaJS bisa mem-parsing dan mengolah data JSON dengan sangat cepat tanpa adanya parser tambahan.
+
+## 3. Jelaskan alur yang terjadi saat kamu menggunakan fungsi view untuk mengembalikan data portofoliomu dalam bentuk JSON. Mengapa kita perlu melakukan proses serialization pada model Django sebelum datanya dikembalikan?
+
+Ketika fungsi view dipanggil (misal get_experience_json), browser akan mengirimkan request ke URL yang terhubung dengan view tersebut. Dalam kasus ini, request akan dikirim ke `/api/experience/`. Lalu, function view ini akan menggunakan Django ORM untuk mengambil data dari databasenya, seperti `Experience.objects.all()`, yang kemudian akan menghasilkan `QuerySet`. Setelah itu, Django *Serializer* akan menerjemahkan objek Python itu menjadi suatu format teks yang terstruktur (JSON), yang kemudian akan dibungkus ke dalam HttpResponse (untuk Experience: `HttpResponse(experience_json, content_type="application/json")`) agar browser mengetahui bagaimana cara membacanya, lalu dikirimkan kembali ke browser.
+
+Untuk kenapa kita perlu melakukan serialization sendiri, data yang diambil dari database ORM itu berbentuk objek spesifik dari Python, sehingga jaringan internet (HTTP protocol) dan client application (browser atau JS) tidak mengetahui apa atau bagaimana memroses objek Python itu. Dengan demikian, kita perlu melakukan serialization untuk menerjemahkan objek Python menjadi format teks yang bersifat universal (JSON atau XML) agar datanya bisa dikirim melalui jaringan dan dipahami oleh platform atau bahasa pemrograman apapun di sisi penerima.
+
+## AI Disclosure and Reflection
+
+Saya menggunakan Generative AI dalam pengerjaan Individual Assignment 3 pekan ini, yaitu Gemini 3.1 Pro. 
+
+Untuk penggunaannya sendiri, seperti pekan-pekan sebelumnya, saya menggunakan Generative AI untuk membantu saya memahami materi pekan ini lebih dalam, mempelajari best-practices yang diterapkan dalam website development, serta memperbaiki kode atau debugging kode apabila bermasalah.
+
+Salah satu bagian yang saya merasa dibantu oleh Generative AI adalah bagian `CreativeProject` dan implementasi *form and data delivery*-nya. Pada awalnya, saya mengimplementasi bagian ini sama seperti bagian forms lainnya (education, experience, dan project general). Namun, ketika saya ingin mengimplementasi penambahan `PortfolioItem` sehingga user bisa langsung menambahkan foto dan video embed melalui website tanpa mengakses admin page, Generative AI menjelaskan bahwasannya dalam Django, `ModelForm` pada umumnya memiliki pemetaan 1-to-1 dengan satu model. Dengan itu, `ModelForm` tidak dirancang untuk menangani pemetaan 1-to-Many yang saya lakukan untuk `CreativeProject` dan `PortfolioItem` (satu `CreativeProject` memiliki banyak `PortfolioItem`).
+
+Generative AI pada awalnya menyarankan saya untuk menggunakan JavaScript untuk membuat tombol 'Tambah Foto' di frontend serta menggunakan arsitektur `inlineformset_factory` di sisi backend. Karena saya belum merasa percaya diri dapat menganalisis dan mengkritisi luaran dari Generative AI seputar JavaScript (serta materi JavaScript di perkuliahan baru akan dibahas di pekan 6 bersama Tutorial/Individual Assignment 5), saya memutuskan untuk hanya membuat tombol pembuatan `CreativeProject` saja sebagai cangkang `PortfolioItem` (sama seperti model lainnya), dan menyerahkan penambahan foto kembali ke Django admin panel yang sudah memiliki fitur `InlineModelAdmin` bawaan.
