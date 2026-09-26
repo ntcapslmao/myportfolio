@@ -7,11 +7,13 @@
                 <p class="section-kicker">Academic Background</p>
                 <div class="project-header">
                     <h1>Education</h1>
+                    {% if user.is_superuser %}
                     <a href="{% url 'main:create_education' %}"
                         class="button project-add-button">
                         <span aria-hidden="true">+</span>
                         Tambah Riwayat Pendidikan
                     </a>
+                    {% endif %}
                 </div>
                 
                 {% if messages %}
@@ -57,7 +59,9 @@
                             <div class="project-card-actions">
                                 <div class="project-actions">
                                     <a href="{% url 'main:edit_education' education.id %}" class="button button-secondary">Edit</a>
-                                    {% include "components/education_delete_modal.html" with education=education %}
+                                    {% if user.is_superuser %}
+                                        {% include "components/education_delete_modal.html" with education=education %}
+                                    {% endif %}
                                 </div>
                             </div>
                         </article>

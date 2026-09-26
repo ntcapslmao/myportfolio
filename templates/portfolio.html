@@ -7,11 +7,13 @@
                 <p class="section-kicker">Through the Lens</p>
                 <div class="project-header">
                     <h1>Creative Works and Portfolio</h1>
+                    {% if user.is_superuser %}
                     <a href="{% url 'main:create_portfolio' %}"
                         class="button project-add-button">
                         <span aria-hidden="true">+</span>
                         Tambah Creative Works
                     </a>
+                    {% endif %}
                 </div>
                 
                 {% if messages %}
@@ -88,7 +90,9 @@
                             <div class="project-card-actions" style="margin-top: 2rem;">
                                 <div class="project-actions">
                                     <a href="{% url 'main:edit_portfolio' creative_project.id %}" class="button button-secondary">Edit</a>
-                                    {% include "components/portfolio_delete_modal.html" with creative_project=creative_project %}
+                                    {% if user.is_superuser %}
+                                        {% include "components/portfolio_delete_modal.html" with creative_project=creative_project %}
+                                    {% endif %}
                                 </div>
                             </div>
                             
