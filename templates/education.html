@@ -58,7 +58,10 @@
 
                             <div class="project-card-actions">
                                 <div class="project-actions">
-                                    <a href="{% url 'main:edit_education' education.id %}" class="button button-secondary">Edit</a>
+                                    {% if user.is_superuser %}
+                                        <a href="{% url 'main:edit_education' education.id %}" class="button button-secondary">Edit</a>
+                                    {% endif %}
+                                        {% include "components/education_star.html" with education=education %}
                                     {% if user.is_superuser %}
                                         {% include "components/education_delete_modal.html" with education=education %}
                                     {% endif %}

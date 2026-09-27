@@ -53,7 +53,9 @@
                                     {% if project.project_url %}
                                         <a href="{{ project.project_url }}" class="button" target="_blank" rel="noopener noreferrer">Lihat Project</a>
                                     {% endif %}
-                                    <a href="{% url 'main:edit_project' project.id %}" class="button button-secondary">Edit</a>
+                                    {% if user.is_superuser or is_editor %}
+                                        <a href="{% url 'main:edit_project' project.id %}" class="button button-secondary">Edit</a>
+                                    {% endif %}
                                         {% include "components/project_star.html" with project=project %}
                                     {% if user.is_superuser %}                                        
                                         {% include "components/project_delete_modal.html" with project=project %}

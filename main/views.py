@@ -72,10 +72,13 @@ def show_experience(request):
     experiences = [exp.object for exp in experiences]
     title_query = request.GET.get("title", "").strip()
 
+    is_editor = request.user.groups.filter(name='Editor').exists() if request.user.is_authenticated else False
+
     context = {
         "name": "Muhammad Ghazi Alfisyahri Latief",
         "experience_list": experiences,
         "title_query": title_query,
+        "is_editor": is_editor,
     }
     return render(request, "experience.html", context)
 
@@ -127,7 +130,13 @@ def get_experience_json(request):
     experience_json = serializers.serialize("json", experiences)
     return HttpResponse(experience_json, content_type="application/json")
 
+@login_required(login_url="/login/")
 def edit_experience(request, experience_id):
+    is_editor = request.user.groups.filter(name='Editor').exists()
+
+    if not (request.user.is_superuser or is_editor):
+        raise PermissionDenied
+    
     experience = get_object_or_404(Experience, pk=experience_id)
 
     if request.method == "POST":
@@ -146,6 +155,18 @@ def edit_experience(request, experience_id):
     }
     return render(request, "experience_form.html", context)
 
+@login_required(login_url="/login/")
+def toggle_star_experience(request, experience_id):
+    experience = get_object_or_404(Experience, pk=experience_id)
+
+    if request.method == "POST":
+        if request.user in experience.starred_by.all():
+            experience.starred_by.remove(request.user)
+        else:
+            experience.starred_by.add(request.user)
+
+    return redirect("main:show_experience")
+
 # atas exp, bawah edu
 
 def show_education(request):
@@ -157,10 +178,13 @@ def show_education(request):
     educations = [edu.object for edu in educations]
     title_query = request.GET.get("title", "").strip()
 
+    is_editor = request.user.groups.filter(name='Editor').exists() if request.user.is_authenticated else False
+
     context = {
         "name": "Muhammad Ghazi Alfisyahri Latief",
         "education_list": educations,
         "title_query": title_query,
+        "is_editor": is_editor,
     }
 
     return render(request, "education.html", context)
@@ -213,7 +237,13 @@ def get_education_json(request):
     education_json = serializers.serialize("json", educations)
     return HttpResponse(education_json, content_type="application/json")
 
+@login_required(login_url="/login/")
 def edit_education(request, education_id):
+    is_editor = request.user.groups.filter(name='Editor').exists()
+
+    if not (request.user.is_superuser or is_editor):
+        raise PermissionDenied
+    
     education = get_object_or_404(Education, pk=education_id)
     if request.method == "POST":
         form = EducationForm(request.POST, instance=education)
@@ -231,11 +261,25 @@ def edit_education(request, education_id):
         }
     return render(request, "education_form.html", context)
 
+@login_required(login_url="/login/")
+def toggle_star_education(request, education_id):
+    education = get_object_or_404(Education, pk=education_id)
+
+    if request.method == "POST":
+        if request.user in education.starred_by.all():
+            education.starred_by.remove(request.user)
+        else:
+            education.starred_by.add(request.user)
+
+    return redirect("main:show_education")
+
 # atas edu, bawah porto
 
 def show_portfolio(request):
     title_query = request.GET.get("title", "").strip()
     projects = CreativeProject.objects.prefetch_related("items").order_by("-started_at")
+
+    is_editor = request.user.groups.filter(name='Editor').exists() if request.user.is_authenticated else False
 
     if title_query:
         projects = projects.filter(title__icontains=title_query)
@@ -244,6 +288,7 @@ def show_portfolio(request):
         "name": "Muhammad Ghazi Alfisyahri Latief",
         "projects": projects,
         "title_query": title_query,
+        "is_editor": is_editor
     }
 
     return render(request, "portfolio.html", context)
@@ -292,7 +337,13 @@ def get_portfolio_json(request):
         projects = projects.filter(title__icontains=title_query)
     return HttpResponse(serializers.serialize("json", projects), content_type="application/json")
 
+@login_required(login_url="/login/")
 def edit_portfolio(request, project_id):
+    is_editor = request.user.groups.filter(name='Editor').exists()
+
+    if not (request.user.is_superuser or is_editor):
+        raise PermissionDenied
+    
     project = get_object_or_404(CreativeProject, pk=project_id)
     if request.method == "POST":
         form = CreativeProjectForm(request.POST, instance=project)
@@ -310,6 +361,18 @@ def edit_portfolio(request, project_id):
         }
     return render(request, "portfolio_form.html", context)
 
+@login_required(login_url="/login/")
+def toggle_star_portfolio(request, project_id):
+    project = get_object_or_404(CreativeProject, pk=project_id)
+
+    if request.method == "POST":
+        if request.user in project.starred_by.all():
+            project.starred_by.remove(request.user)
+        else:
+            project.starred_by.add(request.user)
+
+    return redirect("main:show_portfolio")
+
 # atas porto, bawah project
 
 def show_projects(request):
@@ -322,10 +385,13 @@ def show_projects(request):
     projects = [project.object for project in projects]
     title_query = request.GET.get("title", "").strip()
 
+    is_editor = request.user.groups.filter(name='Editor').exists() if request.user.is_authenticated else False
+
     context = {
         "name": "Muhammad Ghazi Alfisyahri Latief",
         "project_list": projects,
         "title_query": title_query,
+        "is_editor": is_editor,
     }
     return render(request, "project.html", context)
 
@@ -377,7 +443,13 @@ def get_projects_json(request):
     projects_json = serializers.serialize("json", projects, use_natural_foreign_keys=True)
     return HttpResponse(projects_json, content_type="application/json")
 
+@login_required(login_url="/login/")
 def edit_project(request, project_id):
+    is_editor = request.user.groups.filter(name='Editor').exists()
+
+    if not (request.user.is_superuser or is_editor):
+        raise PermissionDenied
+
     project = get_object_or_404(Project, pk=project_id)
 
     if request.method == "POST":
