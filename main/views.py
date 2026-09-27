@@ -127,7 +127,7 @@ def get_experience_json(request):
     if title_query:
         experiences = experiences.filter(title__icontains=title_query)
 
-    experience_json = serializers.serialize("json", experiences)
+    experience_json = serializers.serialize("json", experiences, use_natural_foreign_keys=True)
     return HttpResponse(experience_json, content_type="application/json")
 
 @login_required(login_url="/login/")
@@ -234,7 +234,7 @@ def get_education_json(request):
             Q(institution__icontains=title_query) | Q(degree__icontains=title_query)
         )
 
-    education_json = serializers.serialize("json", educations)
+    education_json = serializers.serialize("json", educations, use_natural_foreign_keys=True)
     return HttpResponse(education_json, content_type="application/json")
 
 @login_required(login_url="/login/")
@@ -335,7 +335,7 @@ def get_portfolio_json(request):
     projects = CreativeProject.objects.all()
     if title_query:
         projects = projects.filter(title__icontains=title_query)
-    return HttpResponse(serializers.serialize("json", projects), content_type="application/json")
+    return HttpResponse(serializers.serialize("json", projects, use_natural_foreign_keys=True), content_type="application/json")
 
 @login_required(login_url="/login/")
 def edit_portfolio(request, project_id):

@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 from django.conf import settings
+from django.contrib.auth.models import User
 
 from main.models import Experience, Education, CreativeProject, PortfolioItem, Project
 
@@ -20,6 +21,13 @@ class MainPageTest(TestCase):
         self.assertEqual(response.status_code, 404)
 class ExperienceTest(TestCase):
     def setUp(self):
+        self.superuser = User.objects.create_superuser(
+            username='admin_gacor',
+            password="admingacor123"
+        ) # type: ignore
+
+        self.client.login(username="admin_gacor", password="admingacor123")
+        
         self.experience = Experience.objects.create(
             title="Staff of Documentation and Animation",
             organisation="COMPFEST 18",
@@ -104,6 +112,13 @@ class ExperienceTest(TestCase):
 
 class EducationTest(TestCase):
     def setUp(self):
+        self.superuser = User.objects.create_superuser(
+            username='admin_gacor',
+            password="admingacor123"
+        ) # type: ignore
+
+        self.client.login(username="admin_gacor", password="admingacor123")
+
         self.education = Education.objects.create(
             degree="Bachelor of Computer Science",
             institution="Universitas Indonesia",
@@ -156,6 +171,13 @@ class EducationTest(TestCase):
 
 class PortfolioTest(TestCase):
     def setUp(self):
+        self.superuser = User.objects.create_superuser(
+            username='admin_gacor',
+            password="admingacor123"
+        ) # type: ignore
+
+        self.client.login(username="admin_gacor", password="admingacor123")
+
         self.project = CreativeProject.objects.create(
             title="Personal Photography Hunts",
             description="Personal photography taken from my travels.",
@@ -214,6 +236,13 @@ class PortfolioTest(TestCase):
 
 class ProjectTest(TestCase):
     def setUp(self):
+        self.superuser = User.objects.create_superuser(
+            username='admin_gacor',
+            password="admingacor123"
+        ) # type: ignore
+
+        self.client.login(username="admin_gacor", password="admingacor123")
+        
         self.project = Project.objects.create(
             title="BurhanQuest",
             description="Membangun game RPG dengan Java CLI saat DDP2.",
