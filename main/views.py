@@ -16,8 +16,12 @@ import datetime
 def register(request):
     form = UserCreationForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
-        form.save()
+        user = form.save()
+        login(request,user)
+        response = redirect("main:show_main")
+        response.set_cookie('last_login', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         messages.success(request, "Akun berhasil dibuat! Silakan lakukan login.")
+        return response
 
     context = {
         "name": "Muhammad Ghazi Alfisyahri Latief",
