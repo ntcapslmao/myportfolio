@@ -6,7 +6,7 @@ from main.views import (
     show_education, create_education, delete_education, get_education_json, edit_education,
     show_portfolio, create_portfolio, delete_portfolio, edit_portfolio,
     show_projects, create_project, delete_project, get_projects_json, edit_project, 
-    register, login_user, logout_user,
+    register, login_user, logout_user, create_project_ajax,
     toggle_star_experience, toggle_star_project, toggle_star_education, toggle_star_portfolio,
 )
 
@@ -41,6 +41,7 @@ urlpatterns = [
 
     path("projects/", show_projects, name="show_projects"),
     path("projects/add/", create_project, name="create_project"),
+    path("projects/add-ajax/", create_project_ajax, name="create_project_ajax"),
     path("api/projects/", get_projects_json, name="get_projects_json"),
     path("projects/<uuid:project_id>/delete/", delete_project ,name="delete_project"),
     path("projects/edit/<uuid:project_id>/", edit_project, name="edit_project"),
