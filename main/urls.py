@@ -4,9 +4,10 @@ from main.views import (
     show_main, 
     show_experience, create_experience, delete_experience, get_experience_json, edit_experience,
     show_education, create_education, delete_education, get_education_json, edit_education,
-    show_portfolio, create_portfolio, delete_portfolio, edit_portfolio,
+    show_portfolio, create_portfolio, delete_portfolio, edit_portfolio, get_portfolio_json,
     show_projects, create_project, delete_project, get_projects_json, edit_project, 
-    register, login_user, logout_user, create_project_ajax,
+    register, login_user, logout_user, create_project_ajax, create_experience_ajax,
+    create_education_ajax, create_portfolio_ajax,
     toggle_star_experience, toggle_star_project, toggle_star_education, toggle_star_portfolio,
 )
 
@@ -21,6 +22,7 @@ urlpatterns = [
 
     path("experience/", show_experience, name="show_experience"),
     path("experience/add/", create_experience, name="create_experience"),
+    path("experience/add-ajax/", create_experience_ajax, name="create_experience_ajax"),
     path("api/experience/", get_experience_json, name="get_experience_json"),
     path("experience/<uuid:experience_id>/delete/", delete_experience, name="delete_experience"),
     path("experience/edit/<uuid:experience_id>/", edit_experience, name="edit_experience"),
@@ -28,6 +30,7 @@ urlpatterns = [
 
     path("education/", show_education, name="show_education"),
     path("education/add/", create_education, name="create_education"),
+    path("education/add-ajax/", create_education_ajax, name="create_education_ajax"),
     path("api/education/", get_education_json, name="get_education_json"),
     path("education/<uuid:education_id>/delete/", delete_education, name="delete_education"),
     path("education/edit/<uuid:education_id>/", edit_education, name="edit_education"),
@@ -35,6 +38,8 @@ urlpatterns = [
 
     path("portfolio/", show_portfolio, name="show_portfolio"),
     path("portfolio/add/", create_portfolio, name="create_portfolio"),
+    path("portfolio/add-ajax/", create_portfolio_ajax, name="create_portfolio_ajax"),
+    path("api/portfolio/", get_portfolio_json, name="get_portfolio_json"),
     path("portfolio/<uuid:project_id>/delete/", delete_portfolio ,name="delete_portfolio"),
     path("portfolio/edit/<uuid:project_id>/", edit_portfolio, name="edit_portfolio"),
     path("portfolio/<uuid:project_id>/star/", toggle_star_portfolio, name="toggle_star_portfolio"),

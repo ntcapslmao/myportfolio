@@ -8,14 +8,15 @@
                 <div class="project-header">
                     <h1>Creative Works and Portfolio</h1>
                     {% if user.is_superuser %}
-                    <a href="{% url 'main:create_portfolio' %}"
-                        class="button project-add-button">
+                    <button type="button"
+                            class="button project-add-button"
+                            popovertarget="add-portfolio-modal">
                         <span aria-hidden="true">+</span>
-                        Tambah Creative Works
-                    </a>
+                        Tambah Creative Project
+                    </button>
                     {% endif %}
                 </div>
-                
+
                 {% if messages %}
                 <div class="messages-container">
                     {% for message in messages %}
@@ -26,10 +27,9 @@
                 </div>
                 {% endif %}
                 
-                <form method="get"
-                        action="{% url 'main:show_portfolio' %}"
-                        class="project-search">
+                <form id="portfolio-search-form" class="project-search">
                     <input type="search"
+                            id="search-input"
                             name="title"
                             value="{{ title_query }}"
                             placeholder="Cari berdasarkan nama karya atau acara"
@@ -38,78 +38,245 @@
                     <button type="submit" class="button">Cari</button>
                 </form>
                 
-                <div class="portfolio-list" style="display: flex; flex-direction: column; gap: 3rem;">
-                    {% for creative_project in projects %}
-                        <article class="mvt-item-card" style="width: 100%;">
-                            
-                            <h2>{{ creative_project.title }}</h2>
-
-                            <p class="mvt-item-meta">
-                                {% if creative_project.is_ongoing %}
-                                    {{ creative_project.started_at|date:"M Y" }} &ndash; Present
-                                {% elif creative_project.started_at.year == creative_project.ended_at.year %}
-                                    {{ creative_project.started_at|date:"M Y" }} &ndash; {{ creative_project.ended_at|date:"M Y" }}
-                                {% else %}
-                                    {{ creative_project.started_at|date:"Y" }} &ndash; {{ creative_project.ended_at|date:"Y" }}
-                                {% endif %}
-                            </p>
-
-                            <p class="mvt-item-description">
-                                {{ creative_project.description|linebreaksbr }}
-                            </p>
-
-                            {% if creative_project.items.all %}
-                            <div class="event-gallery" style="margin-top: 1.5rem;">
-                                {% for item in creative_project.items.all %}
-                                    
-                                    {% if item.video_embed_url %}
-                                    <div class="portfolio-item">
-                                        <iframe 
-                                            src="{{ item.video_embed_url }}" 
-                                            title="{{ item.title }}"
-                                            loading="lazy" 
-                                            frameborder="0"
-                                            allowfullscreen>
-                                        </iframe>
-                                    </div>
-                                    
-                                    {% elif item.image_url %}
-                                    <a href="#lightbox-item{{ item.id }}" class="portfolio-item">
-                                        <img src="{{ item.image_url }}" alt="{{ item.title }}" loading="lazy">
-                                    </a>
-                                        
-                                    <a href="#_" class="lightbox" id="lightbox-item{{ item.id }}">
-                                        <img src="{{ item.image_url }}" alt="{{ item.title }}">
-                                    </a>
-                                    {% endif %}
-                                    
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-
-                            <div class="project-card-actions" style="margin-top: 2rem;">
-                                <div class="project-actions">
-                                    {% if user.is_superuser %}
-                                        <a href="{% url 'main:edit_portfolio' creative_project.id %}" class="button button-secondary">Edit</a>
-                                    {% endif %}
-                                        {% include "components/portfolio_star.html" with creative_project=creative_project %}
-                                    {% if user.is_superuser %}
-                                        {% include "components/portfolio_delete_modal.html" with creative_project=creative_project %}
-                                    {% endif %}
-                                </div>
-                            </div>
-                            
-                        </article>
-
-                    {% empty %}
-                        {% if title_query %}
-                        <p class="empty-state">Tidak ada karya dengan nama tersebut.</p>
-                        {% else %}
-                        <p class="empty-state">Belum ada creative work yang ditambahkan.</p>
-                        {% endif %}
-                    {% endfor %}
+                <div id="loading" class="empty-state hide">
+                    <p>Memuat creative projects...</p>
                 </div>
+
+                <div id="error" class="empty-state hide">
+                    <p>Gagal memuat data pengalaman. Silakan coba lagi.</p>
+                </div>
+
+                <div id="empty" class="empty-state hide">
+                    <p>Belum ada pengalaman yang ditambahkan.</p>
+                </div>
+
+                <div id="grid" class="mvt-item-grid hide"></div>
             </div>
         </section>
     </main>
+
+{% if user.is_superuser %}
+    {% include "components/portfolio_form_modal.html" %}
+{% endif %}
+
+<script>
+    const BASE_PORTFOLIO_ENDPOINT = "{% url 'main:get_portfolio_json' %}";
+    const CREATE_PORTFOLIO_ENDPOINT = "{% url 'main:create_portfolio_ajax' %}";
+    const IS_SUPERUSER = "{{ user.is_superuser|yesno:'true,false' }}" === "true";
+    const IS_EDITOR = "{{ is_editor|yesno:'true,false' }}" === "true";
+    let portfolioAbortController;
+
+    const loadingState = document.getElementById('loading');
+    const errorState = document.getElementById('error');
+    const emptyState = document.getElementById('empty');
+    const gridContainer = document.getElementById('grid');
+    const searchForm = document.getElementById('portfolio-search-form');
+    const searchInput = document.getElementById('search-input');
+    const portfolioForm = document.getElementById('portfolio-form');
+    
+    const SEARCH_DEBOUNCE_DELAY = 300;
+    let searchDebounceTimer;
+
+    function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
+        loadingState.classList.toggle('hide', !showLoading);
+        errorState.classList.toggle('hide', !showError);
+        emptyState.classList.toggle('hide', !showEmpty);
+        gridContainer.classList.toggle('hide', !showGrid);
+    }
+
+    function escapeHtml(value) {
+        return String(value ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+function buildPortfolioCardElement(item) {
+        const port = item.fields;
+        const portId = item.pk;
+
+        const articleElement = document.createElement('article');
+        articleElement.className = 'mvt-item-card';
+
+        const deleteUrl = "{% url 'main:delete_portfolio' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', portId);
+        const editUrl = "{% url 'main:edit_portfolio' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', portId);
+        const starUrl = "{% url 'main:toggle_star_portfolio' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', portId);
+        
+        const csrfToken = getCookie('csrftoken') || '';
+
+        const editHtml = (IS_SUPERUSER || IS_EDITOR) ? `<a href="${editUrl}" class="button button-secondary">Edit</a>` : '';
+        const deleteHtml = IS_SUPERUSER 
+            ? `<form method="post" action="${deleteUrl}" style="display:inline;" onsubmit="const pass = prompt('Masukkan kata sandi untuk menghapus karya ini:'); if(pass) { this.querySelector('[name=passcode]').value = pass; return true; } return false;">
+                <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
+                <input type="hidden" name="passcode" value="">
+                <button type="submit" class="button button-danger">Hapus</button>
+            </form>` : '';
+
+        const isStarredClass = port.is_starred ? " is-starred" : "";
+        const starText = port.is_starred ? "Unstar" : "Star";
+        const starTitle = port.star_count > 0 ? `Dibintangi oleh ${escapeHtml(port.starred_by_names)}` : "Jadilah yang pertama memberi star";
+        const descHtml = escapeHtml(port.description).replace(/\n/g, '<br>');
+
+        const images = port.portfolio_items ? port.portfolio_items.filter(m => m.image_url) : [];
+        const videos = port.portfolio_items ? port.portfolio_items.filter(m => m.video_embed_url) : [];
+
+        let mediaHtml = '';
+        let lightboxesHtml = '';
+
+        if (images.length > 0) {
+            mediaHtml += '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1.5rem;">';
+            
+            images.forEach((media, index) => {
+                const uid = `lightbox-${portId}-${index}`;
+                const safeImg = escapeHtml(media.image_url);
+                const safeTitle = escapeHtml(media.title);
+
+                mediaHtml += `
+                    <a href="#${uid}" class="portfolio-item">
+                        <img src="${safeImg}" alt="${safeTitle}">
+                    </a>
+                `;
+
+                lightboxesHtml += `
+                    <a href="#!" class="lightbox" id="${uid}">
+                        <img src="${safeImg}" alt="${safeTitle}">
+                    </a>
+                `;
+            });
+            mediaHtml += '</div>';
+        }
+
+        if (videos.length > 0) {
+            mediaHtml += '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1.5rem;">';
+            
+            videos.forEach(media => {
+                const safeVid = escapeHtml(media.video_embed_url);
+                const safeTitle = escapeHtml(media.title);
+                
+                mediaHtml += `
+                    <div class="portfolio-item">
+                        <iframe src="${safeVid}" title="${safeTitle}" allowfullscreen></iframe>
+                    </div>
+                `;
+            });
+            mediaHtml += '</div>';
+        }
+
+        articleElement.innerHTML = `
+            <h2>${escapeHtml(port.title)}</h2>
+            <p class="mvt-item-meta">
+                ${escapeHtml(port.started_at_formatted)} &ndash; ${escapeHtml(port.ended_at_formatted)}
+            </p>
+            <p class="mvt-item-description">${descHtml}</p>
+
+            ${mediaHtml}
+
+            <div class="project-card-actions">
+                <div class="project-actions">
+                    ${editHtml}
+                    <form method="post" action="${starUrl}" class="star-form">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
+                        <button type="submit" class="button button-star${isStarredClass}" title="${starTitle}">
+                            <span aria-hidden="true">★</span> ${starText} <span class="star-count">${port.star_count}</span>
+                        </button>
+                    </form>
+                    ${deleteHtml}
+                </div>
+            </div>
+            
+            ${lightboxesHtml}
+        `;
+        return articleElement;
+    }
+
+    function closePortfolioModal() {
+        const modal = document.getElementById("add-portfolio-modal");
+        if(modal) modal.hidePopover();
+    }
+
+    async function fetchPortfolio(searchQuery = "") {
+        if (portfolioAbortController) portfolioAbortController.abort();
+        portfolioAbortController = new AbortController();
+
+        try {
+            displayPageSection({ showLoading: true });
+            const url = searchQuery ? `${BASE_PORTFOLIO_ENDPOINT}?title=${encodeURIComponent(searchQuery)}` : BASE_PORTFOLIO_ENDPOINT;
+            
+            const response = await fetch(url, { headers: { 'Accept': 'application/json' }, signal: portfolioAbortController.signal });
+            if (!response.ok) throw new Error('Failed to fetch data');
+
+            const data = await response.json();
+
+            if (data.length === 0) {
+                displayPageSection({ showEmpty: true });
+            } else {
+                gridContainer.innerHTML = '';
+                data.forEach(item => gridContainer.appendChild(buildPortfolioCardElement(item)));
+                displayPageSection({ showGrid: true });
+            }
+        } catch (error) {
+            if (error.name === 'AbortError') return;
+            displayPageSection({ showError: true });
+        }
+    }
+
+    async function addPortfolio(event) {
+        event.preventDefault();
+        const submitButton = portfolioForm.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+
+        try {
+            const response = await fetch(CREATE_PORTFOLIO_ENDPOINT, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                body: new FormData(portfolioForm),
+            });
+            
+            const result = await response.json().catch(() => ({}));
+
+            if (response.ok) {
+                portfolioForm.reset();
+                closePortfolioModal();
+                if(typeof showToast === 'function') showToast('Berhasil', result.message, 'success');
+                fetchPortfolio(searchInput.value.trim());
+            } else {
+                const errorMessages = result.errors ? Object.values(result.errors).flat().map(error => error.message) : [result.message];
+                if(typeof showToast === 'function') showToast('Gagal', errorMessages.join(' '), 'error');
+            }
+        } catch (error) {
+            if(typeof showToast === 'function') showToast('Gagal', 'Tidak dapat terhubung ke server.', 'error');
+        } finally {
+            submitButton.disabled = false;
+        }
+    }
+
+    function searchPortfolio() { fetchPortfolio(searchInput.value.trim()); }
+
+    searchInput.addEventListener("input", function() {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(searchPortfolio, SEARCH_DEBOUNCE_DELAY);
+    });
+
+    searchForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+        clearTimeout(searchDebounceTimer);
+        searchPortfolio();
+    });
+
+    if (portfolioForm) portfolioForm.addEventListener('submit', addPortfolio);
+
+    fetchPortfolio(searchInput.value.trim());
+</script>
 {% endblock content %}

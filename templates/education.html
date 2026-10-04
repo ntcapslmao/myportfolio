@@ -8,11 +8,12 @@
                 <div class="project-header">
                     <h1>Education</h1>
                     {% if user.is_superuser %}
-                    <a href="{% url 'main:create_education' %}"
-                        class="button project-add-button">
+                    <button type="button"
+                            class="button project-add-button"
+                            popovertarget="add-education-modal">
                         <span aria-hidden="true">+</span>
                         Tambah Riwayat Pendidikan
-                    </a>
+                    </button>
                     {% endif %}
                 </div>
                 
@@ -26,10 +27,9 @@
                 </div>
                 {% endif %}
                 
-                <form method="get"
-                        action="{% url 'main:show_education' %}"
-                        class="project-search">
+                <form id="education-search-form" class="project-search">
                     <input type="search"
+                            id="search-input"
                             name="title"
                             value="{{ title_query }}"
                             placeholder="Cari berdasarkan nama gelar/jurusan"
@@ -38,46 +38,206 @@
                     <button type="submit" class="button">Cari</button>
                 </form>
                 
-                <div class="mvt-item-grid">
-                    {% for education in education_list %}
-                        <article class="mvt-item-card">
-                            
-                            <h2>{{ education.degree }}</h2>
-
-                            <p class="mvt-item-meta">
-                                <span class="org-name">{{ education.institution }}</span> &bull;
-                                {{ education.started_at|date:"M Y" }} &ndash;
-                                {% if education.is_ongoing %}Present{% else %}{{ education.ended_at|date:"M Y" }}{% endif %}
-                            </p>
-
-                            {% if education.description %}
-                            <p class="mvt-item-description">
-                                {{ education.description|linebreaksbr }}
-                            </p>
-                            {% endif %}
-
-                            <div class="project-card-actions">
-                                <div class="project-actions">
-                                    {% if user.is_superuser %}
-                                        <a href="{% url 'main:edit_education' education.id %}" class="button button-secondary">Edit</a>
-                                    {% endif %}
-                                        {% include "components/education_star.html" with education=education %}
-                                    {% if user.is_superuser %}
-                                        {% include "components/education_delete_modal.html" with education=education %}
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </article>
-
-                    {% empty %}
-                        {% if title_query %}
-                        <p class="empty-state">Tidak ada riwayat pendidikan dengan nama tersebut.</p>
-                        {% else %}
-                        <p class="empty-state">Belum ada riwayat pendidikan yang ditambahkan.</p>
-                        {% endif %}
-                    {% endfor %}
+                <div id="loading" class="empty-state hide">
+                    <p>Memuat riwayat pendidikan...</p>
                 </div>
+
+                <div id="error" class="empty-state hide">
+                    <p>Gagal memuat data riwayat pendidikan. Silakan coba lagi.</p>
+                </div>
+
+                <div id="empty" class="empty-state hide">
+                    <p>Belum ada riwayat pendidikan yang ditambahkan.</p>
+                </div>
+
+                <div id="grid" class="mvt-item-grid hide"></div>
             </div>
         </section>
     </main>
+
+{% if user.is_superuser %}
+    {% include "components/education_form_modal.html" %}
+{% endif %}
+
+<script>
+    const BASE_EDUCATION_ENDPOINT = "{% url 'main:get_education_json' %}";
+    const CREATE_EDUCATION_ENDPOINT = "{% url 'main:create_education_ajax' %}";
+    
+    const IS_SUPERUSER = "{{ user.is_superuser|yesno:'true,false' }}" === "true";
+    const IS_EDITOR = "{{ is_editor|yesno:'true,false' }}" === "true";
+    let educationAbortController;
+
+    const loadingState = document.getElementById('loading');
+    const errorState = document.getElementById('error');
+    const emptyState = document.getElementById('empty');
+    const gridContainer = document.getElementById('grid');
+    const searchForm = document.getElementById('education-search-form');
+    const searchInput = document.getElementById('search-input');
+    const educationForm = document.getElementById('education-form');
+    
+    const SEARCH_DEBOUNCE_DELAY = 300;
+    let searchDebounceTimer;
+
+    function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
+        loadingState.classList.toggle('hide', !showLoading);
+        errorState.classList.toggle('hide', !showError);
+        emptyState.classList.toggle('hide', !showEmpty);
+        gridContainer.classList.toggle('hide', !showGrid);
+    }
+
+    function escapeHtml(value) {
+        return String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function buildEducationCardElement(item) {
+        const edu = item.fields;
+        const eduId = item.pk;
+
+        const articleElement = document.createElement('article');
+        articleElement.className = 'mvt-item-card';
+
+        const deleteUrl = "{% url 'main:delete_education' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', eduId);
+        const editUrl = "{% url 'main:edit_education' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', eduId);
+        const starUrl = "{% url 'main:toggle_star_education' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', eduId);
+        
+        const csrfToken = getCookie('csrftoken') || '';
+
+        const editHtml = (IS_SUPERUSER || IS_EDITOR)
+            ? `<a href="${editUrl}" class="button button-secondary">Edit</a>` : '';
+
+        const deleteHtml = IS_SUPERUSER 
+            ? `<form method="post" action="${deleteUrl}" style="display:inline;" onsubmit="const pass = prompt('Masukkan kata sandi untuk menghapus riwayat ini:'); if(pass) { this.querySelector('[name=passcode]').value = pass; return true; } return false;">
+                <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
+                <input type="hidden" name="passcode" value="">
+                <button type="submit" class="button button-danger">Hapus</button>
+            </form>` : '';
+
+        const isStarredClass = edu.is_starred ? " is-starred" : "";
+        const starText = edu.is_starred ? "Unstar" : "Star";
+        const starTitle = edu.star_count > 0 ? `Dibintangi oleh ${escapeHtml(edu.starred_by_names)}` : "Jadilah yang pertama memberi star";
+        
+        const descHtml = escapeHtml(edu.description).replace(/\n/g, '<br>');
+
+        articleElement.innerHTML = `
+            <h2>${escapeHtml(edu.institution)}</h2>
+            <p class="mvt-item-meta">
+                <span class="org-name">${escapeHtml(edu.degree)}</span> &bull; 
+                ${escapeHtml(edu.started_at_formatted)} &ndash; ${escapeHtml(edu.ended_at_formatted)}
+            </p>
+            <p class="mvt-item-description">${descHtml}</p>
+
+            <div class="project-card-actions">
+                <div class="project-actions">
+                    ${editHtml}
+                    <form method="post" action="${starUrl}" class="star-form">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
+                        <button type="submit" class="button button-star${isStarredClass}" title="${starTitle}">
+                            <span aria-hidden="true">★</span> ${starText} <span class="star-count">${edu.star_count}</span>
+                        </button>
+                    </form>
+                    ${deleteHtml}
+                </div>
+            </div>
+        `;
+        return articleElement;
+    }
+
+    function closeEducationModal() {
+        const modal = document.getElementById("add-education-modal");
+        if(modal) modal.hidePopover();
+    }
+
+    async function fetchEducation(searchQuery = "") {
+        if (educationAbortController) educationAbortController.abort();
+        educationAbortController = new AbortController();
+
+        try {
+            displayPageSection({ showLoading: true });
+            const url = searchQuery ? `${BASE_EDUCATION_ENDPOINT}?title=${encodeURIComponent(searchQuery)}` : BASE_EDUCATION_ENDPOINT;
+            
+            const response = await fetch(url, { headers: { 'Accept': 'application/json' }, signal: educationAbortController.signal });
+            if (!response.ok) throw new Error('Failed to fetch data');
+
+            const data = await response.json();
+
+            if (data.length === 0) {
+                displayPageSection({ showEmpty: true });
+            } else {
+                gridContainer.innerHTML = '';
+                data.forEach(item => gridContainer.appendChild(buildEducationCardElement(item)));
+                displayPageSection({ showGrid: true });
+            }
+        } catch (error) {
+            if (error.name === 'AbortError') return;
+            displayPageSection({ showError: true });
+        }
+    }
+
+    async function addEducation(event) {
+        event.preventDefault();
+        const submitButton = educationForm.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+
+        try {
+            const response = await fetch(CREATE_EDUCATION_ENDPOINT, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                body: new FormData(educationForm),
+            });
+            
+            const result = await response.json().catch(() => ({}));
+
+            if (response.ok) {
+                educationForm.reset();
+                closeEducationModal();
+                if(typeof showToast === 'function') showToast('Berhasil', 'Pendidikan berhasil ditambahkan!', 'success');
+                fetchEducation(searchInput.value.trim());
+            } else {
+                const errorMessages = result.errors ? Object.values(result.errors).flat().map(error => error.message) : [result.message];
+                if(typeof showToast === 'function') showToast('Gagal', errorMessages.join(' '), 'error');
+            }
+        } catch (error) {
+            if(typeof showToast === 'function') showToast('Gagal', 'Tidak dapat terhubung ke server.', 'error');
+        } finally {
+            submitButton.disabled = false;
+        }
+    }
+
+    function searchEducation() { fetchEducation(searchInput.value.trim()); }
+
+    searchInput.addEventListener("input", function() {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(searchEducation, SEARCH_DEBOUNCE_DELAY);
+    });
+
+    searchForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+        clearTimeout(searchDebounceTimer);
+        searchEducation();
+    });
+
+    if (educationForm) educationForm.addEventListener('submit', addEducation);
+
+    fetchEducation(searchInput.value.trim());
+</script>
 {% endblock content %}

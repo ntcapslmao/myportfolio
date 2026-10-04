@@ -18,6 +18,20 @@ class ExperienceForm(ModelForm):
         label="Admin Password"
     )
 
+    started_at = forms.DateTimeField(
+        required=True,
+        input_formats=['%Y-%m-%d', '%Y-%m-%dT%H:%M', '%Y-%m-%d %H:%M:%S', '%Y-%m-%d %H:%M'],
+        widget=DateInput(attrs={"type": "date", "class": "form-date"}),
+        label="Waktu Mulai"
+    )
+
+    ended_at = forms.DateTimeField(
+        required=False,
+        input_formats=['%Y-%m-%d', '%Y-%m-%dT%H:%M', '%Y-%m-%d %H:%M:%S', '%Y-%m-%d %H:%M'],
+        widget=DateInput(attrs={"type": "date", "class": "form-date"}),
+        label="Waktu Selesai (opsional)"
+    )
+
     class Meta:
         model = Experience
         fields = [
@@ -32,7 +46,7 @@ class ExperienceForm(ModelForm):
 
         labels = {
             "title": "Nama Posisi/Peran",
-            "Organisation": "Nama Organisasi",
+            "organisation": "Nama Organisasi",
             "category": "Kategori Pengalaman",
             "description": "Deskripsi Pengalaman",
             "thumbnail": "URL Thumbnail (opsional)",
@@ -82,6 +96,26 @@ class ExperienceForm(ModelForm):
                 }
             )
         }
+
+    def clean_title(self):
+        title = strip_tags(self.cleaned_data.get("title", "")).strip()
+        if not title:
+            raise ValidationError("Nama posisi tidak boleh hanya berisi tag HTML.")
+        return title
+
+    def clean_organisation(self):
+        org = self.cleaned_data.get("organisation", "")
+        if not org:
+            return "Personal"
+
+        org = strip_tags(str(org)).strip()
+        if not org:
+            raise ValidationError("Nama organisasi tidak boleh hanya berisi tag HTML.")
+        return org
+
+    def clean_description(self):
+        return strip_tags(self.cleaned_data["description"]).strip()
+
 
     def clean_passcode(self):
         data = self.cleaned_data.get("passcode")
@@ -149,6 +183,24 @@ class EducationForm(ModelForm):
                 }
             )
         }
+
+    def clean_institution(self):
+        institution = self.cleaned_data.get("institution", "")
+        institution = strip_tags(str(institution)).strip()
+        if not institution:
+            raise ValidationError("Nama lembaga/institusi tidak boleh hanya berisi tag HTML.")
+        return institution
+
+    def clean_degree(self):
+        degree = self.cleaned_data.get("degree", "")
+        degree = strip_tags(str(degree)).strip()
+        if not degree:
+            raise ValidationError("Gelar/jurusan tidak boleh hanya berisi tag HTML.")
+        return degree
+
+    def clean_description(self):
+        desc = self.cleaned_data.get("description", "")
+        return strip_tags(str(desc)).strip()
 
     def clean_passcode(self):
         data = self.cleaned_data.get("passcode")
@@ -228,7 +280,6 @@ class ProjectForm(ModelForm):
     def clean_description(self):
         return strip_tags(self.cleaned_data["description"]).strip()
 
-
     def clean_passcode(self):
         data = self.cleaned_data.get("passcode")
         if data != settings.SECRET_PASSWORD:
@@ -262,6 +313,17 @@ class CreativeProjectForm(forms.ModelForm):
             "started_at": forms.DateInput(attrs={"type": "date"}),
             "ended_at": forms.DateInput(attrs={"type": "date"}),
         }
+
+    def clean_title(self):
+        title = self.cleaned_data.get("title", "")
+        title = strip_tags(str(title)).strip()
+        if not title:
+            raise ValidationError("Nama karya/acara tidak boleh hanya berisi tag HTML.")
+        return title
+
+    def clean_description(self):
+        desc = self.cleaned_data.get("description", "")
+        return strip_tags(str(desc)).strip()
 
     def clean_passcode(self):
         data = self.cleaned_data.get("passcode")

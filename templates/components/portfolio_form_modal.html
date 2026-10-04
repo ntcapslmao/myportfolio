@@ -1,0 +1,45 @@
+<div id="add-portfolio-modal"
+     class="project-form-modal"
+     popover="auto"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="add-portfolio-modal-title">
+    
+    <button type="button" 
+            class="project-form-modal__backdrop" 
+            popovertarget="add-portfolio-modal" 
+            popovertargetaction="hide"
+            aria-label="Tutup form tambah creative project"></button>
+
+    <div class="project-form-modal__content">
+        <button type="button" 
+                class="project-form-modal__close" 
+                popovertarget="add-portfolio-modal" 
+                popovertargetaction="hide"
+                aria-label="Tutup form tambah creative project">×</button>
+
+        <h2 id="add-portfolio-modal-title">Tambah Creative Project</h2>
+        <form id="portfolio-form" 
+              method="post" 
+              action="{% url 'main:create_portfolio' %}" 
+              class="project-form">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <p class="form-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <div class="project-form-modal__actions">
+                <button type="button" 
+                        class="button button-secondary" 
+                        popovertarget="add-portfolio-modal" 
+                        popovertargetaction="hide">Batal</button>
+                <button type="submit" class="button">Tambah Karya</button>
+            </div>
+        </form>
+    </div>
+</div>

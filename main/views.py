@@ -69,20 +69,13 @@ def show_main(request):
 # atas main, bawah exp
 
 def show_experience(request):
-    json_response = get_experience_json(request)
-
-    experiences = serializers.deserialize(
-        "json", json_response.content.decode("utf-8")
-    )
-    experiences = [exp.object for exp in experiences]
     title_query = request.GET.get("title", "").strip()
-
     is_editor = request.user.groups.filter(name='Editor').exists() if request.user.is_authenticated else False
 
     context = {
         "name": "Muhammad Ghazi Alfisyahri Latief",
-        "experience_list": experiences,
         "title_query": title_query,
+        "form": ExperienceForm(),
         "is_editor": is_editor,
     }
     return render(request, "experience.html", context)
@@ -105,6 +98,27 @@ def create_experience(request):
     }
 
     return render(request, "experience_form.html", context)
+
+@require_POST
+def create_experience_ajax(request):
+    if not request.user.is_superuser:
+        return JsonResponse(
+            {"message": "Hanya pemilik portofolio yang dapat menambahkan pengalaman."},
+            status=403,
+        )
+
+    form = ExperienceForm(request.POST)
+    if form.is_valid():
+        experience = form.save()
+        return JsonResponse(
+            {"message": "Pengalaman berhasil ditambahkan.",
+             "pk": str(experience.id)},
+             status=201,
+        )
+
+    print("EXPERIENCE FORM ERRORS:", form.errors)
+
+    return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
 
 @login_required(login_url="/login/")
 def delete_experience(request, experience_id):
@@ -132,8 +146,33 @@ def get_experience_json(request):
     if title_query:
         experiences = experiences.filter(title__icontains=title_query)
 
-    experience_json = serializers.serialize("json", experiences, use_natural_foreign_keys=True)
-    return HttpResponse(experience_json, content_type="application/json")
+    data = []
+    for exp in experiences:
+        is_starred = False
+        if request.user.is_authenticated:
+            is_starred = exp.starred_by.filter(id=request.user.id).exists()
+
+        starred_users = exp.starred_by.all()
+        starred_by_names = ", ".join([u.username for u in starred_users])
+
+        data.append({
+            "pk": str(exp.id),
+            "fields": {
+                "title": exp.title,
+                "organisation": exp.organisation,
+                "category": exp.category,
+                "description": exp.description,
+                "thumbnail": str(exp.thumbnail) if exp.thumbnail else "",
+                "started_at_formatted": exp.started_at.strftime("%b %Y") if exp.started_at else "",
+                "ended_at_formatted": exp.ended_at.strftime("%b %Y") if exp.ended_at else "",
+                "is_ongoing": exp.is_ongoing,
+                "star_count": starred_users.count(),
+                "is_starred": is_starred,
+                "starred_by_names": starred_by_names, 
+            }
+        })
+
+    return JsonResponse(data, safe=False)
 
 @login_required(login_url="/login/")
 def edit_experience(request, experience_id):
@@ -175,20 +214,13 @@ def toggle_star_experience(request, experience_id):
 # atas exp, bawah edu
 
 def show_education(request):
-    json_response = get_education_json(request)
-
-    educations = serializers.deserialize(
-        "json", json_response.content.decode("utf-8")
-    )
-    educations = [edu.object for edu in educations]
     title_query = request.GET.get("title", "").strip()
-
     is_editor = request.user.groups.filter(name='Editor').exists() if request.user.is_authenticated else False
 
     context = {
         "name": "Muhammad Ghazi Alfisyahri Latief",
-        "education_list": educations,
         "title_query": title_query,
+        "form": EducationForm(),
         "is_editor": is_editor,
     }
 
@@ -211,6 +243,25 @@ def create_education(request):
         "form": form
     }
     return render(request, "education_form.html", context)
+
+@require_POST
+def create_education_ajax(request):
+    if not request.user.is_superuser:
+        return JsonResponse(
+            {"message": "Hanya pemilik portofolio yang dapat menambahkan riwayat pendidikan."}, 
+            status=403
+        )
+
+    form = EducationForm(request.POST)
+    if form.is_valid():
+        education = form.save()
+        return JsonResponse(
+            {"message": "Pendidikan berhasil ditambahkan.", 
+             "pk": str(education.id)}, 
+             status=201
+        )
+
+    return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
 
 @login_required(login_url="/login/")
 def delete_education(request, education_id):
@@ -239,8 +290,30 @@ def get_education_json(request):
             Q(institution__icontains=title_query) | Q(degree__icontains=title_query)
         )
 
-    education_json = serializers.serialize("json", educations, use_natural_foreign_keys=True)
-    return HttpResponse(education_json, content_type="application/json")
+    data = []
+    for edu in educations:
+        is_starred = False
+        if request.user.is_authenticated:
+            is_starred = edu.starred_by.filter(id=request.user.id).exists()
+
+        starred_users = edu.starred_by.all()
+        starred_by_names = ", ".join([u.username for u in starred_users])
+
+        data.append({
+            "pk": str(edu.id),
+            "fields": {
+                "institution": edu.institution,
+                "degree": edu.degree,
+                "description": edu.description,
+                "started_at_formatted": edu.started_at.strftime("%Y") if edu.started_at else "",
+                "ended_at_formatted": edu.ended_at.strftime("%Y") if edu.ended_at else "Present",
+                "star_count": starred_users.count(),
+                "is_starred": is_starred,
+                "starred_by_names": starred_by_names,
+            }
+        })
+    
+    return JsonResponse(data, safe=False)
 
 @login_required(login_url="/login/")
 def edit_education(request, education_id):
@@ -282,21 +355,35 @@ def toggle_star_education(request, education_id):
 
 def show_portfolio(request):
     title_query = request.GET.get("title", "").strip()
-    projects = CreativeProject.objects.prefetch_related("items").order_by("-started_at")
-
     is_editor = request.user.groups.filter(name='Editor').exists() if request.user.is_authenticated else False
-
-    if title_query:
-        projects = projects.filter(title__icontains=title_query)
 
     context = {
         "name": "Muhammad Ghazi Alfisyahri Latief",
-        "projects": projects,
         "title_query": title_query,
-        "is_editor": is_editor
+        "form": CreativeProjectForm(),
+        "is_editor": is_editor,
     }
 
     return render(request, "portfolio.html", context)
+
+@require_POST
+def create_portfolio_ajax(request):
+    if not request.user.is_superuser:
+        return JsonResponse(
+            {"message": "Hanya pemilik portofolio yang dapat menambahkan creative project."}, 
+            status=403
+        )
+
+    form = CreativeProjectForm(request.POST)
+    if form.is_valid():
+        project = form.save()
+        return JsonResponse(
+            {"message": "Creative Project berhasil dibuat. Tambahkan foto/video melalui Django Admin.", 
+             "pk": str(project.id)}, 
+             status=201
+        )
+
+    return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
 
 @login_required(login_url="/login/")
 def create_portfolio(request):
@@ -338,9 +425,41 @@ def delete_portfolio(request, project_id):
 def get_portfolio_json(request):
     title_query = request.GET.get("title", "").strip()
     projects = CreativeProject.objects.all()
+
     if title_query:
         projects = projects.filter(title__icontains=title_query)
-    return HttpResponse(serializers.serialize("json", projects, use_natural_foreign_keys=True), content_type="application/json")
+
+    data = []
+    for project in projects:
+        is_starred = False
+        if request.user.is_authenticated:
+            is_starred = project.starred_by.filter(id=request.user.id).exists()
+
+        starred_users = project.starred_by.all()
+        starred_by_names = ", ".join([u.username for u in starred_users])
+
+        portfolio_items = []
+        for item in project.items.all(): # type: ignore
+            portfolio_items.append({
+                "title": item.title,
+                "image_url": item.image_url if item.image_url else "",
+                "video_embed_url": item.video_embed_url if item.video_embed_url else "",
+            })
+
+        data.append({
+            "pk": str(project.id),
+            "fields": {
+                "title": project.title,
+                "description": project.description,
+                "started_at_formatted": project.started_at.strftime("%b %Y") if project.started_at else "",
+                "ended_at_formatted": project.ended_at.strftime("%b %Y") if project.ended_at else "Present",
+                "portfolio_items": portfolio_items,
+                "star_count": starred_users.count(),
+                "is_starred": is_starred,
+                "starred_by_names": starred_by_names,
+            }
+        })
+    return JsonResponse(data, safe=False)
 
 @login_required(login_url="/login/")
 def edit_portfolio(request, project_id):
