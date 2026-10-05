@@ -116,3 +116,35 @@ Pertama adalah masalah *CSS specificity*. Aturan hierarki CSS lama yang sudah ad
 Kedua adalah masalah *Caching*. Saya merasa bahwa Django sering sekali menahan versi lama dari file static .css, sehingga terkadang hard refresh `(Ctrl + F5)` saja tidak cukup. AI menyarankan saya untuk menggunakan teknik cache-busting pada tag `<link>`, agar browser akan selalu memuat CSS terbaru.
 
 Melanjutkan masalah saya tadi, daripada saya menambal-nambal kode yang saling tumpang tindih itu, saya mengambil keputusan untuk merombak total arsitektur *header* agar lebih *bulletproof* dan membuat suatu *clean-slate* saja. Pada akhirnya, navigation *header* menjadi jauh lebih kokoh dan saya dapat menambahkan *styling* saya sendiri dengan leluasa, seperti username menjadi suatu badge yang kesannya lebih *premium* dibandingkan elemen *header* lainnya.
+
+# Individual Assignment 5: A Reflection
+
+## 1. Jelaskan apa itu debouncing dan mengapa teknik ini penting diterapkan pada fitur pencarian yang menggunakan AJAX!
+
+*Debouncing* adalah suatu teknik atau metode menunda eksekusi fungsi sampai aktivitas itu terhenti sejenak. Hal ini memastikan bahwa fungsi hanya dipanggil satu kali saja, dan tidak ada pemanggilan berulang secara cepat pada fungsi itu. Untuk contoh dunia nyatanya, misal ada sensor yang bisa menyalakan keran air di kamar mandi. Jika tidak ada fitur *debouncing* pada sensor itu, maka hal yang bisa terjadi adalah keran akan sering sekali menyala dan mengeluarkan air, meskipun tidak ada tangan yang membuatnya menyala, karena hal-hal kecil seperti serangga, tetesan air dari keran, atau bahkan sensor yang super sensitif sekalipun.
+
+Dalam konteks pencarian AJAX, *debouncing* sendiri digunakan untuk menunda pengiriman request ke network sampai user itu menghentikan sejenak aktivitas mereka melalui `setTimeout`. Hal ini memastikan bahwa server tidak akan mengalami overload ketika melakukan panggilan `fetch()` yang bisa membanjiri *backend* dengan ribuan request yang tidak berguna. Selain itu, *debouncing* juga mengurangi network traffic yang tidak diperlukan (sehingga tidak terlalu membebani UI/UX dan device low-end), serta memastikan hasil yang didapatkan dari database itu relevan dengan permintaan user, dengan menunggu sampai user selesai mengetik sebelum memberikan *query* ke database.
+
+## 2. Jelaskan fungsi dari penggunaan await ketika kita menggunakan fetch()! Apa yang akan terjadi jika kita tidak menggunakan await?
+
+Await digunakan dalam pemanggilan `fetch()` karena pada dasarnya fungsi `await` itu berfungsi untuk menunda eksekusi dari function yang bersifat asynchronous sampai suatu Promise (tanda sukses/gagal dari async function) itu dipenuhi atau tidak. Dengan `await`, kita bisa menulis fungsi async yang terlihat dan bersifat seperti program synchronous sehingga kita akan lebih mudah membaca dan mengembangkannya.
+
+Misalkan suatu async function tidak memiliki `await` dalam pemanggilan `fetch()`. Karena program tidak menunggu pemanggilan `fetch()` untuk selesai, `const variable` (di program ini, adalah `const response`) yang menjadi tempat penampung `fetch()` tidak akan berisi data, melainkan hanya object `Promise` yang tidak memiliki method `.json()` yang dipanggil beberapa baris kemudian, sehingga JavaScript akan melempar `TypeError` atau bisa menghasilkan nilai undefined.
+
+## 3. Jelaskan apa itu serangan XSS (Cross-Site Scripting) dan mengapa data yang ditampilkan melalui AJAX/JavaScript lebih rentan terhadap serangan ini daripada data yang ditampilkan langsung melalui template Django!
+
+Serangan XSS (*cross-site scripting*) adalah kelemahan keamanan yang membiarkan *hacker* atau orang tidak bertanggung jawab lainnya meletakkan *bad code* ke dalam suatu *safe website*. Ketika seseorang mengunjungi laman itu, browser mereka akan menjalankan program itu seolah-olah program itu milik website. Hal ini membuat attacker bisa mengambil informasi pribadi, mengambil login *cookies*, atau mengelabui pengguna dalam cara lainnya. 
+
+Aplikasi yang menggunakan AJAX/JSON lebih rentan karena kita kehilangan fitur *auto-escaping* bawaan dari template Django yang secara default dinyalakan (mengubah karakter rentan dalam penyerangan XSS, seperti `<>'"&`). Ketika kita me-*render* HTML langsung dari Django, Django akan otomatis mencegah *bad code* sebelum bisa sampai ke browser pengguna. Di sisi lain, dalam AJAX, server hanya mengirimkan data mentah berbentuk JSON, lalu JavaScript akan bertugas untuk merakit dan memasukkan data ke dalam website (dengan `innerHTML`). Jika seorang developer melupakan menambahkan function escaping manual di JavaScript untuk membersihkan data JSON, browser akan tetap menerimanya dan akan langsung menjalankan *bad code* yang terselip di dalamnya.
+
+## AI Disclosure and Reflection
+
+Saya menggunakan Generative AI dalam pengerjaan Individual Assignment 5 pada pekan ini, yaitu Gemini 3.1 Pro.
+
+Dalam pengerjaan tugas pekan ini, saya memanfaatkan AI untuk lebih memahami materi yang diajarkan pada pekan ini, serta untuk membantu saya debugging ketika muncul error dalam pembuatan tugas ini. Karena secara keseluruhan tugas ini hanya perlu mengadaptasi program yang sudah diberikan di Tutorial 5 (pada model `Project`) ke model-model lainnya (`Education`, `Experience`, dan `CreativeProjects`), saya menggunakan AI untuk lebih mendalami pemahaman saya. Saya berdiskusi dengan AI mengenai bagaimana cara kerja JavaScript, apa manfaat dari beberapa function tertentu, dan integrasi AJAX dengan Django. Hal ini saya lakukan sebagai suatu persiapan untuk kuis 2 pada Rabu (7/10) dan UTS (19/10) lebih awal.
+
+Pada pekan ini, tantangan terbesar yang saya alami kebanyakan berasal dari ketidaktelitian saya saat mengadaptasi program dari `Project` ke model lainnya, serta penyesuaian tipe data yang waktu itu sempat salah antara *frontend* dan *backend*. Saya sempat mengalami kesulitan ketika widget datetime-local yang saya gunakan sebelumnya saat input form `Experience` itu mengalami mismatch dengan format `DateTimeField` Django, sehingga saya perlu menyesuaikan type inputnya menjadi date dan menambahkan input formatting dalam `forms.py` bagian `Experience`.
+
+Selain itu, saya sempat mendapatkan error 'This field cannot be null.' ketika saya menulis kode, lalu sempat terdistraksi dan lupa meletakkan return value, sehingga saya sempat menelusuri berbagai bagian kode saya sampai saya menemukan kesalahan sepele itu.
+
+Terakhir, saat saya mengimplementasi `CreativeProjects` (yang punya relasi 1-to-many dengan `PortfolioItem`), `PortfolioItem` tidak muncul pada website. Ternyata, saya lupa untuk merakit dan mengirimkan JSON url foto dan video (embed) melalui AJAX, sehingga saya perlu menyusun ulang `dict` dalam `views.py`agar bisa ekstrak url foto dan video (embed) ke dalam list JSON. Setelah itu, saya menemukan bahwa *formatting* dan *lightbox* yang saya implementasikan beberapa pekan lalu juga mengalami gangguan, sehingga saya juga perlu meng-*import* layout CSS Grid ke JavaScript sehingga tampilannya tetap sesuai semula.
