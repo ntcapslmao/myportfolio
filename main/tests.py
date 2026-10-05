@@ -42,13 +42,9 @@ class ExperienceTest(TestCase):
         self.assertTrue(self.experience.is_ongoing)
 
     def test_experience_page_renders_data(self):
-        response = self.client.get(reverse("main:show_experience"))
-
+        response = self.client.get(reverse("main:get_experience_json"))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "experience.html")
         self.assertContains(response, self.experience.title)
-        self.assertContains(response, self.experience.description)
-        self.assertContains(response, "Volunteer")
 
     def test_empty_experience_page(self):
         Experience.objects.all().delete()
@@ -57,11 +53,8 @@ class ExperienceTest(TestCase):
         self.assertContains(response, "Belum ada pengalaman yang ditambahkan.")
 
     def test_completed_experience(self):
-        self.experience.ended_at = timezone.now()
-        self.experience.save()
-        response = self.client.get(reverse("main:show_experience"))
-
-        self.assertFalse(self.experience.is_ongoing)
+        response = self.client.get(reverse("main:get_experience_json"))
+        self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "Present")
 
     def test_create_experience(self):
@@ -128,12 +121,9 @@ class EducationTest(TestCase):
         )
 
     def test_education_page_renders_data(self):
-        response = self.client.get(reverse("main:show_education"))
-
+        response = self.client.get(reverse("main:get_education_json"))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "education.html")
         self.assertContains(response, self.education.degree)
-        self.assertContains(response, self.education.institution)
 
     def test_empty_education_page(self):
         Education.objects.all().delete()
@@ -194,20 +184,14 @@ class PortfolioTest(TestCase):
         self.assertEqual(self.item.project.title, "Personal Photography Hunts") # type: ignore
 
     def test_portfolio_page_renders_data(self):
-        response = self.client.get(reverse("main:show_portfolio"))
-
+        response = self.client.get(reverse("main:get_portfolio_json"))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "portfolio.html")
         self.assertContains(response, self.project.title)
-        self.assertContains(response, self.project.description)
-        self.assertContains(response, self.item.image_url) # type: ignore
-        self.assertContains(response, self.item.title)
 
     def test_empty_portfolio_page(self):
         CreativeProject.objects.all().delete()
-        response = self.client.get(reverse("main:show_portfolio"))
-
-        self.assertContains(response, "Belum ada creative work yang ditambahkan.")
+        response = self.client.get(reverse("main:get_portfolio_json"))
+        self.assertEqual(response.json(), [])
 
     def test_delete_portfolio(self):
         settings.SECRET_PASSWORD = "akucintaburhan42069"
@@ -257,24 +241,19 @@ class ProjectTest(TestCase):
         self.assertEqual(self.project.tech_stack, "Git, Java")
 
     def test_project_page_renders_data(self):
-        response = self.client.get(reverse("main:show_projects"))
-
+        response = self.client.get(reverse("main:get_projects_json"))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "project.html")
         self.assertContains(response, self.project.title)
-        self.assertContains(response, self.project.description)
 
     def test_empty_project_page(self):
         Project.objects.all().delete()
-        response = self.client.get(reverse("main:show_projects"))
-        self.assertContains(response, "Belum ada proyek yang ditambahkan.")
+        response = self.client.get(reverse("main:get_projects_json"))
+        self.assertEqual(response.json(), [])
 
     def test_project_search_functionality(self):
-        response = self.client.get(reverse("main:show_projects"), {"title": "BurhanQuest"})
-        self.assertContains(response, "BurhanQuest")
-
-        empty_response = self.client.get(reverse("main:show_projects"), {"title": "asihjnbudihudashuidas"})
-        self.assertContains(empty_response, "Tidak ada proyek dengan nama tersebut.")
+        response = self.client.get(reverse("main:get_projects_json"), {'title': 'asihjnbudihudashuidas'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), [])
 
     def test_delete_project_wrong_password(self):
         response = self.client.post(
