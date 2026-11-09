@@ -22,7 +22,8 @@
         <form id="education-form"
               method="post"
               action="{% url 'main:create_education' %}"
-              class="project-form">
+              class="project-form"
+              novalidate>
             {% csrf_token %}
             {% for field in form %}
                 <div class="form-group">
