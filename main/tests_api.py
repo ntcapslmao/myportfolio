@@ -294,14 +294,14 @@ class EducationAPITest(APITestCase):
 
         # Request without CSRF token is rejected
         response = client.post(self.list_url, self.payload, format="json")
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN) # type: ignore
         self.assertEqual(Education.objects.count(), 1)
 
         # Request with CSRF token succeeds
         page = client.get(self.list_url, HTTP_ACCEPT="text/html")
         token = client.cookies["csrftoken"].value
         response = client.post(self.list_url, self.payload, format="json", HTTP_X_CSRFTOKEN=token)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED) # type: ignore
         self.assertEqual(Education.objects.count(), 2)
 
 
@@ -429,13 +429,13 @@ class ExperienceAPITest(APITestCase):
         self.assertTrue(client.login(username="owner_exp", password="test-password"))
 
         response = client.post(self.list_url, self.payload, format="json")
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN) # type: ignore
         self.assertEqual(Experience.objects.count(), 1)
 
         page = client.get(self.list_url, HTTP_ACCEPT="text/html")
         token = client.cookies["csrftoken"].value
         response = client.post(self.list_url, self.payload, format="json", HTTP_X_CSRFTOKEN=token)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED) # type: ignore
         self.assertEqual(Experience.objects.count(), 2)
 
 
@@ -558,11 +558,11 @@ class CreativeProjectAPITest(APITestCase):
         self.assertTrue(client.login(username="owner_port", password="test-password"))
 
         response = client.post(self.list_url, self.payload, format="json")
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN) # type: ignore
         self.assertEqual(CreativeProject.objects.count(), 1)
 
         page = client.get(self.list_url, HTTP_ACCEPT="text/html")
         token = client.cookies["csrftoken"].value
         response = client.post(self.list_url, self.payload, format="json", HTTP_X_CSRFTOKEN=token)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED) # type: ignore
         self.assertEqual(CreativeProject.objects.count(), 2)

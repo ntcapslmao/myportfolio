@@ -4,7 +4,7 @@
 * NPM     : 2506537751
 * Kelas   : PBP A
 
-# Individual Assignment 1: A Reflection
+# Individual Assignment 1: Static Web with HTML5 and CSS3
 
 ## 1. Pada Tutorial dan Tugas 1, Anda diberi kebebasan untuk menentukan tampilan dari website portofolio Anda. Saat Anda merancang struktur HTML yang digunakan, apakah Anda menggunakan elemen semantik HTML5 seperti `<section>`, `<article>`, atau `<aside>`? Jika iya, bagaimana elemen tersebut membantu Anda dalam membuat static web? Jika tidak, mengapa tanpa elemen tersebut sudah memenuhi kebutuhan desain Anda?
 
@@ -33,7 +33,7 @@ Namun, Generative AI tentu saja tidak sempurna dapat menggantikan saya sebagai p
 4. Gemini tidak selalu memberikan kode yang sempurna pada pesan pertama yang dikirimkan. Saya sering perlu mengecek dan menilai program berulang kali agar kode yang diberikan itu sudah benar dan sesuai dengan permintaan. Ketika mengimplementasikan *responsive web design* untuk tablet dan ponsel, saya menemukan *error* saat *window* diperkecil sampai 400-500px. Pada saat itu, foto pribadi saya mengecil secara infinitesimal, sampai tidak terlihat sama sekali. Setelah diselidiki dan sedikit berkelahi dengan Gemini, saya menemukan *bug*-nya dan berhasil menangani hal itu. Hal ini menunjukkan bahwa kode yang diberikan oleh AI tidak sempurna dan rentan dengan *bug* atau ketidaksesuaian dari permintaan atau bayangan awal.
 5. Saya selalu berusaha untuk memastikan untuk tidak ketergantungan dengan AI. Saya menyadari bahwa peran AI dalam hidup mahasiswa yang bertanggung jawab itu adalah sebagai tutor pendamping, bukan suatu mesin yang bisa melakukan apapun yang saya inginkan. Saya juga menyadari nanti saat UTS atau UAS, saya tidak dapat menggunakan AI untuk membantu saya, sehingga saya perlu memahami logika dari HTML dan CSS itu untuk membangun suatu fondasi kedepannya. Fondasi yang buruk tentu tidak akan membangun suatu bangunan yang kokoh, dan hal ini juga saya rasakan untuk mata kuliah PBP ini. Apabila saya sudah ketergantungan menggunakan AI pada fondasi dari mata kuliah PBP, maka saya rasa saya akan dirugikan di kemudian hari.
 
-# Individual Assignment 2: A Reflection
+# Individual Assignment 2: Implementasi MVT pada Django
 
 ## 1. Jelaskan alur yang terjadi ketika pengguna membuka halaman portofolio baru, mulai dari permintaan yang diterima proyek hingga data ditampilkan pada browser. Dalam jawabanmu, jelaskan peran urls.py proyek, urls.py aplikasi, view, model, dan template.
 
@@ -71,7 +71,7 @@ Pelajaran yang saya dapat dari pekan ini adalah:
 1. Jangan terlalu cepat percaya dengan Generative AI dan menerimanya secara mentah-mentah. Generative AI tidak selalu mengetahui bagaimana infrastruktur yang kita pakai, terutama infrastruktur yang sifatnya in-house seperti PWS. Selalu perdalam dan riset lebih lanjut seputar apa yang dikeluarkan oleh Generative AI.
 2. Sebisa mungkin coba lakukan Test Driven Development (atau paling tidak, coba dulu websitenya di localhost dengan `python manage.py runserver`).
 
-# Individual Assignment 3: A Reflection
+# Individual Assignment 3: Form and Data Delivery
 
 ## 1. Jelaskan mengapa kita menggunakan `ModelForm` pada Django alih-alih membuat form HTML secara manual. Selain itu, jelaskan pula mengapa kita diwajibkan menambahkan `{% csrf_token %}` pada form tersebut!
 
@@ -101,7 +101,7 @@ Salah satu bagian yang saya merasa dibantu oleh Generative AI adalah bagian `Cre
 
 Generative AI pada awalnya menyarankan saya untuk menggunakan JavaScript untuk membuat tombol 'Tambah Foto' di frontend serta menggunakan arsitektur `inlineformset_factory` di sisi backend. Karena saya belum merasa percaya diri dapat menganalisis dan mengkritisi luaran dari Generative AI seputar JavaScript (serta materi JavaScript di perkuliahan baru akan dibahas di pekan 6 bersama Tutorial/Individual Assignment 5), saya memutuskan untuk hanya membuat tombol pembuatan `CreativeProject` saja sebagai cangkang `PortfolioItem` (sama seperti model lainnya), dan menyerahkan penambahan foto kembali ke Django admin panel yang sudah memiliki fitur `InlineModelAdmin` bawaan.
 
-# Individual Assignment 4: A Reflection
+# Individual Assignment 4: Authentication, Sessions, and Cookies Implementation
 
 ## AI Disclosure and Reflection
 
@@ -117,7 +117,7 @@ Kedua adalah masalah *Caching*. Saya merasa bahwa Django sering sekali menahan v
 
 Melanjutkan masalah saya tadi, daripada saya menambal-nambal kode yang saling tumpang tindih itu, saya mengambil keputusan untuk merombak total arsitektur *header* agar lebih *bulletproof* dan membuat suatu *clean-slate* saja. Pada akhirnya, navigation *header* menjadi jauh lebih kokoh dan saya dapat menambahkan *styling* saya sendiri dengan leluasa, seperti username menjadi suatu badge yang kesannya lebih *premium* dibandingkan elemen *header* lainnya.
 
-# Individual Assignment 5: A Reflection
+# Individual Assignment 5: Web Interactivity with JS
 
 ## 1. Jelaskan apa itu debouncing dan mengapa teknik ini penting diterapkan pada fitur pencarian yang menggunakan AJAX!
 
@@ -148,3 +148,44 @@ Pada pekan ini, tantangan terbesar yang saya alami kebanyakan berasal dari ketid
 Selain itu, saya sempat mendapatkan error 'This field cannot be null.' ketika saya menulis kode, lalu sempat terdistraksi dan lupa meletakkan return value, sehingga saya sempat menelusuri berbagai bagian kode saya sampai saya menemukan kesalahan sepele itu.
 
 Terakhir, saat saya mengimplementasi `CreativeProjects` (yang punya relasi 1-to-many dengan `PortfolioItem`), `PortfolioItem` tidak muncul pada website. Ternyata, saya lupa untuk merakit dan mengirimkan JSON url foto dan video (embed) melalui AJAX, sehingga saya perlu menyusun ulang `dict` dalam `views.py`agar bisa ekstrak url foto dan video (embed) ke dalam list JSON. Setelah itu, saya menemukan bahwa *formatting* dan *lightbox* yang saya implementasikan beberapa pekan lalu juga mengalami gangguan, sehingga saya juga perlu meng-*import* layout CSS Grid ke JavaScript sehingga tampilannya tetap sesuai semula.
+
+# Individual Assignment 6: Django REST Framework Implementation
+## 1. Jelaskan apa yang dimaksud dengan REST dan mengapa mengembalikan JSON saja belum cukup untuk menyebut sebuah API sebagai RESTful! Jelaskan pula perbedaan `PUT` dan `PATCH` beserta contoh kapan masing-masing sebaiknya digunakan!
+
+REST, atau Representational State Transfer, adalah software architectural style untuk sistem komunikasi sistem terdistribusi (seperti web) yang dikenalkan oleh Roy Fielding pada tahun 2000 sebagai bagian dari penelitian disertasinya. Konsep utamanya itu berpusat pada pengelolaan resource, yang diidentifikasi secara unik dengan URI/URL berbentuk noun, misal `/api/v1/education/<id>/`, serta memanfaatkan standard methods HTTP, yaitu GET untuk membaca, POST untuk membuat, PUT/PATCH untuk meng-update, dan DELETE untuk menghapus, dan bersifat stateless (setiap request dari client bawa semua info yang dibutuhkan server untuk memprosesnya, tanpa bergantung dengan konteks yang tersimpan di server dari request sebelumnya).
+
+Alasan mengapa mengembalikan format JSON belum memenuhi syarat RESTful API jika penamaan URL-nya masih menggunakan verba/kata kerja (gaya RPC, misal `/api/delete_project/`), menyalahgunakan HTTP methods (misal semua aksi pakai POST), atau tidak memanfaatkan status code HTTP dengan tepat (misal return status 200 OK padahal ada kesalahan izin akses atau data yang tidak ditemukan).
+
+Perbedaan PUT dan PATCH sendiri itu ada di cakupan perubahannya. PUT digunakan untuk mengganti seluruh representasi data (full replacement), sehingga client wajib untuk mengirim seluruh attribute resource dengan lengkap, misalnya saat memperbarui seluruh data riwayat pendidikan melalui form yang lengkap (jadi terkadang harus input ulang dan mengubah seluruh atribut). Sedangkan PATCH digunakan untuk memperbarui sebagian data saja (partial update), sehingga client hanya cukup mengirimkan field yang ingin diubah tanpa menyentuh field lainnya, misal saat Editor hanya ingin mengubah typo di judul object Creative Project tanpa mengirim ulang deskripsi, tanggal proyek, URL, dan sebagainya.
+
+## 2. Jelaskan peran serializer pada Django REST Framework! Apa keuntungannya dibandingkan merakit dictionary secara manual dengan JsonResponse seperti pada Tutorial 05?
+
+Serializer pada Django REST Framework berperan sebagai suatu jembatan dua arah antara representasi data di database dan format pertukaran data (seperti JSON). Serialisasi (output) sendiri mengubah data kompleks dari *object model* Django atau QuerySet menjadi *primitive data type* Python (*dict*/*list*) yang kemudian lebih mudah diterjemahkan menjadi JSON untuk dikirim ke client. Sedangkan deserialisasi & validasi (input) mengubah data JSON mentah dari *request client* kembali menjadi primitive data type Python, lalu *object model* Django yang valid. Dalam proses ini, serializer menjalankan validasi *data type*, aturan model, dan sanitasi teks kustom (misal `validate_<field>` dengan `strip_tags`) sebelum data disimpan ke database dengan `.save()`.
+
+Keuntungan utama serializer dibandingkan dengan merakit *dict* secara manual dengan `JsonResponse` adalah efisiensi dan *security*. Merakit *dict* manual itu sangat repetitif, rawan human-error, dan hanya bekerja satu arah untuk membaca data (GET). Sebaliknya, `ModelSerializer` secara otomatis bisa membaca model schema, menyediakan *input validation* yang ketat dan modular melalui method `validate_<field>`, menangani operasi penulisan (POST, PUT, PATCH) secara *integrated*, serta mencegah kebocoran data sensitif dan serangan *mass-assignment* melalui definisi *field attributes* yang eksplisit.
+
+## 3. Jelaskan perbedaan autentikasi dan otorisasi pada Django REST Framework! Mengapa hak akses harus diperiksa dengan permission class di server, bukan hanya dengan menyembunyikan tombol di template?
+
+Authentication (autentikasi), seperti definisi pada umumnya, adalah sistem menanyakan "Siapa anda?" kepada user. Secara spesifik, autentikasi adalah proses memverifikasi dan membuktikan identitas user yang mengirimkan request. Django REST Framework memeriksa credentials (seperti session atau token) untuk mengidentifikasi apakah request itu berasal dari specific user atau secara anonymous (melalui `request.user`). Sementara itu, authorization (otorisas) adalah proses menentukan hak akses pengguna yang telah diautentikasi itu (ibarat pertanyaan "Apa yang bisa dan boleh anda lakukan?"). Django REST Framework di sini menggunakan permission class untuk menentukan apakah user ini berhak melakukan aksi tertentu (seperti `GET`, `PUT`/`PATCH`, atau `DELETE`).
+
+Hak akses wajib diperiksa dengan permission class di server-side (tidak hanya menyembunyikan tombol di template frontend saja) karena interface web client-side sepenuhnya berada di luar kendali server dan sangat mudah dimanipulasi (sesuai prinsip 'never trust the client'). Menyembunyikan tombol hanya bagian dari UI/UX saja, dan siapapun dengan mudah bisa membongkar elemen DOM dengan Inspect Element (F12 atau Ctrl+Shift+J) atau mengirim request HTTP (`POST`/`PATCH`/`DELETE`) secara langsung ke endpoint API dengan tools seperti Postman, cURL, atau console JS. Jika server tidak memvalidasi hak akses dengan *permission class*, server akan tetap mengeksekusi permintaan update data, sehingga perlindungan server-side adalah satu-satunya bentuk security yang valid.
+
+## 4. Jelaskan mengapa permintaan yang mengubah data tetap memerlukan token CSRF ketika API memakai SessionAuthentication! Mengapa test yang memakai force_authenticate tidak cukup untuk membuktikan bahwa perlindungan CSRF berjalan?
+
+Request yang mengubah data (`POST`, `PUT`/`PATCH`, `DELETE`) tetap perlu CSRF token ketika API memakai `SessionAuthentication` karena *session-based authentication* mengandalkan cookie (`sessionid`) yang otomatis selalu dilampirkan oleh browser pada setiap request ke server destination, bahkan jika request tersebut dipicu secara diam-diam oleh situs berbahaya di tab lain (serangan CSRF). Tanpa CSRF token, server tidak bisa membedakan apakah request mengubah data benar-benar dilakukan dengan sengaja oleh user di aplikasi kita atau hasil manipulasi third-party. Dengan mewajibkan CSRF token (via header `X-CSRFToken`) yang terlindungi *Same-Origin Policy*, server dapat memastikan integritas dan asal request tersebut.
+
+Pengujian yang hanya menggunakan `force_authenticate` tidak cukup untuk membuktikan perlindungan CSRF karena function itu hanya suatu mocking yang langsung menyetel `request.user` di memory, sehingga ini mem-bypass seluruh alur autentikasi pada umumnya dan mengabaikan pemeriksaan CSRF token oleh middleware Django. Akibatnya, request tanpa CSRF token akan selalu lolos dalam test tersebut.
+
+Untuk menguji bahwa proteksi dan pertahanan CSRF benar-benar aktif, test harus menggunakan `APIClient(enforce_csrf_checks=True)` disertai `.login()` yang menyimulasikan login session nyata, sehingga terbukti bahwa request tanpa CSRF token ditolak dengan 403 Forbidden dan baru berhasil ketika token header disertakan.
+
+## AI Disclosure and Reflection
+
+Saya menggunakan Generative AI untuk membantu pengerjaan Individual Assignment 6 pekan ini, yaitu Gemini 4 Argon dan Gemini 3.8 Flash melalui extension Antigravity pada VSCode.
+
+Secara garis besar, saya menggunakan AI pada pekan ini untuk mengajak diskusi dan memperdalam pemahaman saya mengenai konsep arsitektur DRF, seperti cara kerja serializer, logic authorization pada permission class, dan CSRF security pada endpoint dengan SessionAuthentication. Untuk strategi prompting saya, karena ini adalah Individual Assigment pertama saya yang menggunakan Antigravity, saya merasa lebih leluasa bisa mereferensikan beragam file-file tanpa harus meng-copy and paste ke Gemini yang ada di website. Namun, saya juga merasa aneh menggunakan Antigravity, terutama terhadap extent apa yang dia baca dan ketahui, mengingat data redaction adalah hal yang sangat penting dilakukan ketika menggunakan LLM atau Generative AI dalam bentuk apapun. Salah satu strategi yang saya terapkan pada pekan ini adalah langsung mention file spesifik yang saya ingin Antigravity untuk menganalisis, serta mencegah Antigravity untuk langsung memodifikasi file secara langsung (minimal terdapat review code, atau saya yang mengetik secara manual) untuk mencegah modifikasi masif yang rentan bug.
+
+Untuk bagian implementasi fitur, saya hanya sekadar mengadaptasi apa yang sudah dibangun model Project pada tutorial 7 ke tiga model milik saya lainnya, yaitu Experience, Education, dan Creative Project. Salah satu bagian yang saya paling merasa terbantu adalah penyusunan unit testing di tests_api.py. Testing pada pekan ini cukup luas dan menyeluruh, karena harus mencakup empat peran user (anon user, regular user, editor, dan superuser), menguji integritas database saat terjadi rejection, menguji input validation and sanitation terhadap tag HTML berbahaya, serta memvalidasi proteksi CSRF secara nyata dengan APIClient(enforce_csrf_checks=True) dan .login(). Bantuan AI mempermudah saya untuk merancang kerangka test cases yang rapi dan menyeluruh.
+
+Keterbatasan AI yang saya temukan pada pekan ini:
+1. Saat test case pencarian data Experience, sempat terjadi AssertionError karena AI salah mengira bahwa string COMPFEST merupakan title, padahal pada kenyataannya adalah organisation.
+2. Saat pengujian XSS sanitation, payload `<script>alert("xss")</script>` yang diajukan oleh AI tetap menyisakan string `alert("xss")` setelah disaring `strip_tags()`, sehingga validasi tidak mendeteksi sebagai teks kosong (returns 201 instead of 400). Saya memperbaiki secara manual dengan mengganti payload menjadi tag tanpa teks konten seperti `<img src="x" onerror="alert(1)">` agar memicu error 400 sesuai spesifikasi.
