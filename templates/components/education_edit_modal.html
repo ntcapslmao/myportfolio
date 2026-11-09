@@ -1,0 +1,59 @@
+<div id="edit-education-modal"
+     class="project-form-modal"
+     popover="auto"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="edit-education-modal-title">
+    
+    <button type="button"
+            class="project-form-modal__backdrop"
+            popovertarget="edit-education-modal"
+            popovertargetaction="hide"
+            aria-label="Tutup form edit pendidikan"></button>
+
+    <div class="project-form-modal__content">
+        <button type="button"
+                class="project-form-modal__close"
+                popovertarget="edit-education-modal"
+                popovertargetaction="hide"
+                aria-label="Tutup form edit pendidikan">×</button>
+
+        <h2 id="edit-education-modal-title">Edit Riwayat Pendidikan</h2>
+        <form id="education-edit-form" class="project-form">
+            <input type="hidden" id="edit-edu-id" name="id">
+
+            <div class="form-group">
+                <label for="edit-edu-institution">Nama Institusi</label>
+                <input type="text" id="edit-edu-institution" name="institution" required maxlength="255" placeholder="e.g. Universitas Indonesia">
+            </div>
+
+            <div class="form-group">
+                <label for="edit-edu-degree">Gelar/Jurusan</label>
+                <input type="text" id="edit-edu-degree" name="degree" required maxlength="255" placeholder="e.g. Bachelor of Computer Science">
+            </div>
+
+            <div class="form-group">
+                <label for="edit-edu-description">Deskripsi (opsional)</label>
+                <textarea id="edit-edu-description" name="description" rows="4" placeholder="Jelaskan peran dan pencapaian..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="edit-edu-started_at">Tanggal Mulai</label>
+                <input type="date" id="edit-edu-started_at" name="started_at" required>
+            </div>
+
+            <div class="form-group">
+                <label for="edit-edu-ended_at">Tanggal Selesai (opsional, kosongkan jika sedang berjalan)</label>
+                <input type="date" id="edit-edu-ended_at" name="ended_at">
+            </div>
+
+            <div class="project-form-modal__actions">
+                <button type="button"
+                        class="button button-secondary"
+                        popovertarget="edit-education-modal"
+                        popovertargetaction="hide">Batal</button>
+                <button type="submit" class="button">Simpan Perubahan</button>
+            </div>
+        </form>
+    </div>
+</div>

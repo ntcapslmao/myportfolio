@@ -1,0 +1,54 @@
+<div id="edit-portfolio-modal"
+     class="project-form-modal"
+     popover="auto"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="edit-portfolio-modal-title">
+
+    <button type="button"
+            class="project-form-modal__backdrop"
+            popovertarget="edit-portfolio-modal"
+            popovertargetaction="hide"
+            aria-label="Tutup form edit creative project"></button>
+
+    <div class="project-form-modal__content">
+        <button type="button"
+                class="project-form-modal__close"
+                popovertarget="edit-portfolio-modal"
+                popovertargetaction="hide"
+                aria-label="Tutup form edit creative project">×</button>
+
+        <h2 id="edit-portfolio-modal-title">Edit Creative Project</h2>
+        <form id="portfolio-edit-form" class="project-form">
+            <input type="hidden" id="edit-port-id" name="id">
+
+            <div class="form-group">
+                <label for="edit-port-title">Nama Karya/Acara</label>
+                <input type="text" id="edit-port-title" name="title" required maxlength="255" placeholder="e.g. Dokumentasi CF18">
+            </div>
+
+            <div class="form-group">
+                <label for="edit-port-description">Deskripsi Acara</label>
+                <textarea id="edit-port-description" name="description" rows="4" placeholder="Ceritakan tentang karya/acara ini..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="edit-port-started_at">Tanggal Mulai</label>
+                <input type="date" id="edit-port-started_at" name="started_at" required>
+            </div>
+
+            <div class="form-group">
+                <label for="edit-port-ended_at">Tanggal Selesai (opsional, kosongkan jika sedang berlangsung)</label>
+                <input type="date" id="edit-port-ended_at" name="ended_at">
+            </div>
+
+            <div class="project-form-modal__actions">
+                <button type="button"
+                        class="button button-secondary"
+                        popovertarget="edit-portfolio-modal"
+                        popovertargetaction="hide">Batal</button>
+                <button type="submit" class="button">Simpan Perubahan</button>
+            </div>
+        </form>
+    </div>
+</div>
