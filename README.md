@@ -2,7 +2,7 @@
 
 * Nama    : Muhammad Ghazi ALfisyahri Latief
 * NPM     : 2506537751
-* Kelas   : PBP A
+* Kelas   : PBP D
 
 # Individual Assignment 1: Static Web with HTML5 and CSS3
 
